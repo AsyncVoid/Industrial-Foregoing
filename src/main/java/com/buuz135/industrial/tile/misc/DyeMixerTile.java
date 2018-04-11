@@ -148,9 +148,11 @@ public class DyeMixerTile extends CustomElectricMachine {
         super.protectedUpdate();
         int[] values = {r, g, b};
         for (int i = 0; i < 3; ++i) {
-            ItemStack stack = inputDyes.getStackInSlot(i);
-            if (!stack.isEmpty() && values[i] + 3 <= 300) {
-                stack.setCount(stack.getCount() - 1);
+            ItemStack stack = inputDyes.getStackInSlot(i);  //TODO !stack.isEmpty()
+            if (stack != null && values[i] + 3 <= 300) {
+                stack.stackSize -= 1;  //TODO stack.setCount(stack.getCount() - 1);
+                if(stack.stackSize < 1)
+                	inputDyes.setStackInSlot(i, null);
                 values[i] = values[i] + 3;
             }
         }
@@ -164,11 +166,11 @@ public class DyeMixerTile extends CustomElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
 
         ItemStack stack = lens.getStackInSlot(0);
-        if (!stack.isEmpty()) {
+        if (stack != null) {  //TODO !stack.isEmpty()
             ColorUsage usage = colorUsages[stack.getMetadata() - 1];
             if (r >= usage.getR() && g >= usage.getG() && b >= usage.getB()) {
                 ItemStack out = new ItemStack(Items.DYE, 1, 15 - stack.getMetadata());
-                if (ItemHandlerHelper.insertItem(output, out, true).isEmpty()) {
+                if (ItemHandlerHelper.insertItem(output, out, true) == null) {  //TODO .isEmpty()
                     r -= usage.getR();
                     g -= usage.getG();
                     b -= usage.getB();

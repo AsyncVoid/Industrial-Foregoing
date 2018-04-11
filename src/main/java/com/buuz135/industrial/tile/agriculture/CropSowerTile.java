@@ -37,7 +37,7 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
     public CropSowerTile() {
         super(CropSowerTile.class.getName().hashCode(), 1, 1, true);
         filterStorage = new ItemStack[9];
-        Arrays.fill(filterStorage, ItemStack.EMPTY);
+        Arrays.fill(filterStorage, null); //TODO  ItemStack.EMPTY
     }
 
     @Override
@@ -68,10 +68,10 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
             public boolean canInsertItem(int slot, ItemStack stack) {
                 if (stack.getItem() instanceof ItemSeeds || stack.getItem() instanceof ItemSeedFood || ItemStackUtils.isStackOreDict(stack, "treeSapling")) {
                     ItemStack clone = stack.copy();
-                    clone.setCount(1);
+                    clone.stackSize = 1;//TODO clone.setCount(1);
                     filterStorage[slot] = clone;
                 } else {
-                    filterStorage[slot] = ItemStack.EMPTY;
+                    filterStorage[slot] = null; //TODO ItemStack.EMPTY
                 }
                 return false;
             }
@@ -98,16 +98,16 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
         if (pointer >= blockPos.size()) pointer = 0;
         if (pointer < blockPos.size()) {
             BlockPos pos = blockPos.get(pointer);
-            if (this.world.isAirBlock(pos)) {
-                FakePlayer player = IndustrialForegoing.getFakePlayer(this.world);
+            if (this.worldObj.isAirBlock(pos)) {
+                FakePlayer player = IndustrialForegoing.getFakePlayer(this.worldObj);
                 ItemStack stack = getFirstItem(pos);
-                if (!stack.isEmpty()) {
+                if (stack != null) { //TODO !stack.isEmpty()
                     Item seeds = stack.getItem();
                     player.setHeldItem(EnumHand.MAIN_HAND, stack);
-                    if (!ItemStackUtils.isStackOreDict(stack, "treeSapling") && (this.world.getBlockState(pos.offset(EnumFacing.DOWN)).getBlock().equals(Blocks.DIRT) || this.world.getBlockState(pos.offset(EnumFacing.DOWN)).getBlock().equals(Blocks.GRASS))) {
-                        this.world.setBlockState(pos.offset(EnumFacing.DOWN), Blocks.FARMLAND.getDefaultState());
-                    }
-                    seeds.onItemUse(player, world, pos.offset(EnumFacing.DOWN), EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
+                    if (!ItemStackUtils.isStackOreDict(stack, "treeSapling") && (this.worldObj.getBlockState(pos.offset(EnumFacing.DOWN)).getBlock().equals(Blocks.DIRT) || this.worldObj.getBlockState(pos.offset(EnumFacing.DOWN)).getBlock().equals(Blocks.GRASS))) {
+                        this.worldObj.setBlockState(pos.offset(EnumFacing.DOWN), Blocks.FARMLAND.getDefaultState());
+                    } //TODO
+                    seeds.onItemUse(stack, player, worldObj, pos.offset(EnumFacing.DOWN), EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
                     return 1;
                 }
             }
@@ -120,14 +120,14 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
 
     private ItemStack getFirstItem(BlockPos pos) {
         int slot = getFilteredSlot(pos);
-        for (int i = 0; i < inPlant.getSlots(); ++i) {
-            if (!inPlant.getStackInSlot(i).isEmpty() && (filterStorage[slot] == null || filterStorage[slot].isEmpty()))
-                return inPlant.getStackInSlot(i);
-            if (!inPlant.getStackInSlot(i).isEmpty() && filterStorage[slot] != null && !filterStorage[slot].isEmpty() &&
+        for (int i = 0; i < inPlant.getSlots(); ++i) { //TODO !.isEmpty()
+            if (inPlant.getStackInSlot(i) != null && (filterStorage[slot] == null || filterStorage[slot] == null))
+                return inPlant.getStackInSlot(i);//TODO !.isEmpty()
+            if (inPlant.getStackInSlot(i) != null && filterStorage[slot] != null && filterStorage[slot] != null &&
                     filterStorage[slot].getItem().equals(inPlant.getStackInSlot(i).getItem()) && filterStorage[slot].getMetadata() == inPlant.getStackInSlot(i).getMetadata())
                 return inPlant.getStackInSlot(i);
         }
-        return ItemStack.EMPTY;
+        return null; //TODO ItemStack.EMPTY
     }
 
     @Override
@@ -137,7 +137,7 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
         NBTTagCompound filterComp = new NBTTagCompound();
         int i = 0;
         for (ItemStack filter : filterStorage) {
-            if (filter != null && !filter.isEmpty()) {
+            if (filter != null) { //TODO !filter.isEmpty()
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString(NBT_NAME, filter.getItem().getRegistryName().toString());
                 tag.setInteger(NBT_DATA, filter.getMetadata());
@@ -158,7 +158,7 @@ public class CropSowerTile extends WorkingAreaElectricMachine {
         if (compound.hasKey(NBT_FILTER)) {
             NBTTagCompound filterComp = compound.getCompoundTag(NBT_FILTER);
             for (int i = 0; i < 9; ++i) {
-                filterStorage[i] = ItemStack.EMPTY;
+                filterStorage[i] = null; //TODO ItemStack.EMPTY
                 if (filterComp.hasKey(String.valueOf(i))) {
                     NBTTagCompound tag = filterComp.getCompoundTag(String.valueOf(i));
                     Item item = Item.getByNameOrId(tag.getString(NBT_NAME));

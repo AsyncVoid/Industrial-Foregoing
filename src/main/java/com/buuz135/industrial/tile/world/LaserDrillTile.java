@@ -23,7 +23,7 @@ public class LaserDrillTile extends CustomElectricMachine {
 
         BlockPos pos = getLaserBasePos();
         if (pos != null) {
-            LaserBaseTile tile = (LaserBaseTile) this.world.getTileEntity(pos);
+            LaserBaseTile tile = (LaserBaseTile) this.worldObj.getTileEntity(pos);
             tile.increaseWork();
             return 1;
         }
@@ -32,8 +32,7 @@ public class LaserDrillTile extends CustomElectricMachine {
 
     public BlockPos getLaserBasePos() {
         BlockPos pos = this.pos.offset(this.getFacing().getOpposite(), 2);
-        if (this.world.getTileEntity(pos) != null && this.world.getTileEntity(pos) instanceof LaserBaseTile) return pos;
+        if (this.worldObj.getTileEntity(pos) != null && this.worldObj.getTileEntity(pos) instanceof LaserBaseTile) return pos;
         return null;
     }
-
 }

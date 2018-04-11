@@ -10,12 +10,11 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class IFCustomItem extends Item {
-
-
     public IFCustomItem(String name) {
-        setUnlocalizedName(Reference.MOD_ID + "_" + name);
-        setCreativeTab(IndustrialForegoing.creativeTab);
-        setRegistryName(Reference.MOD_ID, name);
+    	super();
+        super.setUnlocalizedName(Reference.MOD_ID + "_" + name);
+        super.setCreativeTab(IndustrialForegoing.creativeTab);
+        super.setRegistryName(Reference.MOD_ID, name);
     }
 
     public void register() {

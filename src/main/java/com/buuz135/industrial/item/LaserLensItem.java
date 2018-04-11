@@ -1,5 +1,7 @@
 package com.buuz135.industrial.item;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -7,7 +9,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -20,7 +21,7 @@ public class LaserLensItem extends IFCustomItem {
     }
 
     @Override
-    public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
         for (int i = 0; i < 16; ++i) subItems.add(new ItemStack(this, 1, i));
     }
 
@@ -28,9 +29,9 @@ public class LaserLensItem extends IFCustomItem {
     public void register() {
         super.register();
         for (int i = 0; i < 16; ++i)
-            GameRegistry.addRecipe(new ShapedRecipes(3, 3, new ItemStack[]{ItemStack.EMPTY, new ItemStack(Items.IRON_INGOT), ItemStack.EMPTY,
+            GameRegistry.addRecipe(new ShapedRecipes(3, 3, new ItemStack[]{null, new ItemStack(Items.IRON_INGOT), null,
                     new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i), new ItemStack(Items.IRON_INGOT),
-                    ItemStack.EMPTY, new ItemStack(Items.IRON_INGOT), ItemStack.EMPTY}, new ItemStack(this, 1, i)));
+                    null, new ItemStack(Items.IRON_INGOT), null}, new ItemStack(this, 1, i)));
     }
 
     @Override

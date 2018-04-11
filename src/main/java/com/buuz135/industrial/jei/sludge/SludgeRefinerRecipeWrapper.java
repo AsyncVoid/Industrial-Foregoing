@@ -7,6 +7,7 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
 
 import java.text.DecimalFormat;
@@ -43,4 +44,33 @@ public class SludgeRefinerRecipeWrapper implements IRecipeWrapper {
     public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         return false;
     }
+
+	@Override
+	public void drawAnimations(Minecraft arg0, int arg1, int arg2) {
+		//TODO Auto-generated method stub
+	}
+
+	@Override
+	public List<FluidStack> getFluidInputs() {
+		//TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<FluidStack> getFluidOutputs() {
+		//TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getInputs() {
+		//TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getOutputs() {
+		//TODO Auto-generated method stub
+		return null;
+	}
 }

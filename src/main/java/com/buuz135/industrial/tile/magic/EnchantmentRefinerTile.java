@@ -93,38 +93,49 @@ public class EnchantmentRefinerTile extends CustomElectricMachine {
         this.addInventoryToStorage(outputNoEnch, "ench_ref_out_no");
     }
 
-    public ItemStack getFirstItem() {
+    /*public ItemStack getFirstItem() {
         for (int i = 0; i < input.getSlots(); ++i) {
-            if (!input.getStackInSlot(i).isEmpty()) {
+            if (input.getStackInSlot(i) != null) {  //TODO !input.getStackInSlot(i).isEmpty()
                 return input.getStackInSlot(i);
             }
         }
-        return ItemStack.EMPTY;
+        return null; //TODO ItemStack.EMPTY
+    }*/
+    public int getFirstItemSlot() {
+        for (int i = 0; i < input.getSlots(); ++i) {
+            if (input.getStackInSlot(i) != null) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-
-        ItemStack stack = getFirstItem();
-        if (stack.isEmpty()) {
+        int slot = getFirstItemSlot();
+        ItemStack stack = input.getStackInSlot(slot); //getFirstItem();
+        if (stack == null) { //TODO stack.isEmpty()
             return 0;
         }
         ItemStack out = stack.copy();
-        out.setCount(1);
+        out.stackSize = 1;  //TODO out.setCount(1);
         if (stack.isItemEnchanted() || stack.getItem().equals(Items.ENCHANTED_BOOK)) {
-            if (ItemHandlerHelper.insertItem(outputEnch, out, true).isEmpty()) {
+            if (ItemHandlerHelper.insertItem(outputEnch, out, true) == null) {  //TODO .isEmpty()
                 ItemHandlerHelper.insertItem(outputEnch, out, false);
-                stack.setCount(stack.getCount() - 1);
+                stack.stackSize -= 1; //TODO stack.setCount(stack.getCount() - 1);
+                if(stack.stackSize < 1)
+                	input.setStackInSlot(slot, null);
                 return 500;
             }
-        } else if (ItemHandlerHelper.insertItem(outputNoEnch, out, true).isEmpty()) {
+        } else if (ItemHandlerHelper.insertItem(outputNoEnch, out, true) == null) {//TODO .isEmpty()
             ItemHandlerHelper.insertItem(outputNoEnch, out, false);
-            stack.setCount(stack.getCount() - 1);
+            stack.stackSize -= 1; //TODO stack.setCount(stack.getCount() - 1);
+            if(stack.stackSize < 1)
+            	input.setStackInSlot(slot, null);
             return 500;
         }
 
         return 0;
     }
-
 }

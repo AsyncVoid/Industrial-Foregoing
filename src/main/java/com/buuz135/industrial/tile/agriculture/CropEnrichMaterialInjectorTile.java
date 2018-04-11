@@ -64,11 +64,12 @@ public class CropEnrichMaterialInjectorTile extends WorkingAreaElectricMachine {
         if (pointer >= blockPos.size()) pointer = 0;
         if (pointer < blockPos.size()) {
             BlockPos pos = blockPos.get(pointer);
-            if (!this.world.isAirBlock(pos)) {
+            if (!this.worldObj.isAirBlock(pos)) {
                 ItemStack stack = getFirstItem();
-                if (!stack.isEmpty()) {
-                    FakePlayer player = IndustrialForegoing.getFakePlayer(this.world);
-                    if (ItemDye.applyBonemeal(stack, this.world, pos, player, EnumHand.MAIN_HAND))
+                if (stack != null) { //TODO !stack.isEmpty()
+                    FakePlayer player = IndustrialForegoing.getFakePlayer(this.worldObj);
+                    //TODO ItemDye.applyBonemeal(stack, this.worldObj, pos, player, EnumHand.MAIN_HAND)
+                    if (ItemDye.applyBonemeal(stack, this.worldObj, pos, player))
                         needsToIncrease = false;
                 }
             }
@@ -87,9 +88,9 @@ public class CropEnrichMaterialInjectorTile extends WorkingAreaElectricMachine {
 
 
     private ItemStack getFirstItem() {
-        for (int i = 0; i < inFert.getSlots(); ++i)
-            if (!inFert.getStackInSlot(i).isEmpty()) return inFert.getStackInSlot(i);
-        return ItemStack.EMPTY;
+        for (int i = 0; i < inFert.getSlots(); ++i) //TODO !.isEmpty
+            if (inFert.getStackInSlot(i) != null) return inFert.getStackInSlot(i);
+        return null; //TODO ItemStack.EMPTY
     }
 
     @Override
@@ -105,5 +106,4 @@ public class CropEnrichMaterialInjectorTile extends WorkingAreaElectricMachine {
         if (!compound.hasKey(NBT_POINTER)) pointer = 0;
         else pointer = compound.getInteger(NBT_POINTER);
     }
-
 }

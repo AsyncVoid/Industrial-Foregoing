@@ -16,6 +16,7 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         random = new Random();
+        
         FluidsRegistry.registerFluids();
         ItemRegistry.registerItems();
         BlockRegistry.registerBlocks();

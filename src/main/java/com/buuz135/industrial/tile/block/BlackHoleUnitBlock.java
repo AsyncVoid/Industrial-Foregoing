@@ -50,7 +50,7 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
             if (stack.hasTagCompound()) {
                 entityitem.getEntityItem().setTagCompound(stack.getTagCompound().copy());
             }
-            world.spawnEntity(entityitem);
+            world.spawnEntityInWorld(entityitem); //TODO world.spawnEntity(entityitem);
 
         }
         super.breakBlock(world, pos, state);
@@ -104,7 +104,7 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
 
     public ItemStack getItemStack(ItemStack blackHole) {
         NBTTagCompound compound = blackHole.getTagCompound();
-        ItemStack stack = ItemStack.EMPTY;
+        ItemStack stack = null; //TODO  ItemStack.EMPTY
         if (compound == null || !compound.hasKey(BlackHoleUnitTile.NBT_ITEMSTACK)) return stack;
         Item item = Item.getByNameOrId(compound.getString(BlackHoleUnitTile.NBT_ITEMSTACK));
         if (item != null) {

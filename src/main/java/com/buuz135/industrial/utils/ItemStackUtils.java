@@ -47,7 +47,7 @@ public class ItemStackUtils {
             GlStateManager.disableLighting();
         }
         bakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(bakedmodel, ItemCameraTransforms.TransformType.GUI, false);
-        if (!stack.isEmpty()) {
+        if (stack != null) {        //TODO: !stack.isEmpty() 
             GlStateManager.pushMatrix();
             GlStateManager.translate(-0.5F, -0.5F, -0.5F);
             if (bakedmodel.isBuiltInRenderer()) {
@@ -76,7 +76,7 @@ public class ItemStackUtils {
 
 
     private static void renderQuads(VertexBuffer renderer, List<BakedQuad> quads, int color, ItemStack stack) {
-        boolean flag = color == -1 && !stack.isEmpty();
+        boolean flag = color == -1 && stack.stackSize > 0;    //TODO: !stack.isEmpty() 
         int i = 0;
 
         for (int j = quads.size(); i < j; ++i) {
@@ -139,7 +139,7 @@ public class ItemStackUtils {
     }
 
     public static boolean isStackOreDict(ItemStack stack, String string) {
-        if (stack.isEmpty()) return false;
+        if (stack.stackSize < 1) return false;      //TODO: stack.isEmpty()
         int id = OreDictionary.getOreID(string);
         for (int i : OreDictionary.getOreIDs(stack)) {
             if (i == id) return true;
@@ -148,7 +148,7 @@ public class ItemStackUtils {
     }
 
     public static boolean isOre(ItemStack stack) {
-        if (stack.isEmpty()) return false;
+        if (stack.stackSize < 1) return false;                //TODO: stack.isEmpty() 
         for (int i : OreDictionary.getOreIDs(stack)) {
             if (OreDictionary.getOreName(i).startsWith("ore")) return true;
         }
@@ -157,7 +157,7 @@ public class ItemStackUtils {
 
     public static boolean isInventoryFull(ItemStackHandler handler) {
         for (int i = 0; i < handler.getSlots(); ++i) {
-            if (handler.getStackInSlot(i).isEmpty()) return false;
+            if (handler.getStackInSlot(i).stackSize < 1) return false;     //TODO: handler.getStackInSlot(i).isEmpty()     
         }
         return true;
     }

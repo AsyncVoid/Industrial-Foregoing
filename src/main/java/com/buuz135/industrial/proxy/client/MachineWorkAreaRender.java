@@ -23,13 +23,13 @@ public class MachineWorkAreaRender {
         GlStateManager.pushMatrix();
 
         int radius = 16;
-        BlockPos playerBlockPos = Minecraft.getMinecraft().player.getPosition();
+        BlockPos playerBlockPos = Minecraft.getMinecraft().thePlayer.getPosition();  //TODO player
         for (int x = -radius; x <= radius; ++x) {
             for (int y = -radius; y <= radius; ++y) {
-                for (int z = -radius; z <= radius; ++z) {
+                for (int z = -radius; z <= radius; ++z) {   
                     BlockPos pos = new BlockPos(x + playerBlockPos.getX(), y + playerBlockPos.getY(), z + playerBlockPos.getZ());
-                    if (Minecraft.getMinecraft().world.getTileEntity(pos) != null && Minecraft.getMinecraft().world.getTileEntity(pos) instanceof WorkingAreaElectricMachine) {
-                        WorkingAreaElectricMachine areaElectricMachine = (WorkingAreaElectricMachine) Minecraft.getMinecraft().world.getTileEntity(pos);
+    /*//TODO world*/if (Minecraft.getMinecraft().theWorld.getTileEntity(pos) != null && Minecraft.getMinecraft().theWorld.getTileEntity(pos) instanceof WorkingAreaElectricMachine) {
+                        WorkingAreaElectricMachine areaElectricMachine = (WorkingAreaElectricMachine) Minecraft.getMinecraft().theWorld.getTileEntity(pos);
                         AxisAlignedBB axis = areaElectricMachine.getWorkingArea();
                         if (areaElectricMachine.isShowArea() && axis != null) {
                             GlStateManager.disableDepth();
@@ -40,7 +40,7 @@ public class MachineWorkAreaRender {
                             GL11.glEnable(GL11.GL_BLEND);
                             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                             GL11.glDisable(GL11.GL_TEXTURE_2D);
-                            EntityPlayerSP player = Minecraft.getMinecraft().player;
+                            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
                             Vec3d playerPos = player.getPositionEyes(event.getPartialTicks());
                             GL11.glTranslated(pos.getX() - playerPos.xCoord, pos.getY() - playerPos.yCoord + player.getEyeHeight(), pos.getZ() - playerPos.zCoord);
                             axis = new AxisAlignedBB(axis.minX - pos.getX(), axis.minY - pos.getY(), axis.minZ - pos.getZ(), axis.maxX - pos.getX(), axis.maxY - pos.getY(), axis.maxZ - pos.getZ());

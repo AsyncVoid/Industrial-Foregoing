@@ -61,30 +61,30 @@ public class MobDuplicatorTile extends WorkingAreaElectricMachine {
     @Override
     public float work() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        if (mobTool.getStackInSlot(0).isEmpty()) return 0;
+        if (mobTool.getStackInSlot(0) == null) return 0; //TODO mobTool.getStackInSlot(0).isEmpty()
         if (experienceTank.getFluid() == null) return 0;
         AxisAlignedBB alignedBB = getWorkingArea();
         List<EntityLiving> livings = this.getWorld().getEntitiesWithinAABB(EntityLiving.class, alignedBB);
         if (livings.size() > 20) return 0;
         ItemStack stack = mobTool.getStackInSlot(0);
-        EntityLiving entity = (EntityLiving) ((MobImprisonmentToolItem) stack.getItem()).getEntityFromStack(stack, this.world, false);
+        EntityLiving entity = (EntityLiving) ((MobImprisonmentToolItem) stack.getItem()).getEntityFromStack(stack, this.worldObj, false);
         int canSpawn = (int) ((experienceTank.getFluid() == null ? 0 : experienceTank.getFluid().amount) / (entity.getHealth() * 2));
         if (canSpawn == 0) return 0;
-        int spawnAmount = 1 + this.world.rand.nextInt(Math.min(canSpawn, 4));
+        int spawnAmount = 1 + this.worldObj.rand.nextInt(Math.min(canSpawn, 4));
         List<BlockPos> blocks = BlockUtils.getBlockPosInAABB(alignedBB);
         while (spawnAmount > 0) {
             if (experienceTank.getFluid() != null && experienceTank.getFluid().amount > entity.getHealth() * 2) {
                 int tries = 20;
-                BlockPos random = blocks.get(this.world.rand.nextInt(blocks.size()));
-                while (tries > 0 && !this.world.isAirBlock(random)) {
-                    random = blocks.get(this.world.rand.nextInt(blocks.size()));
+                BlockPos random = blocks.get(this.worldObj.rand.nextInt(blocks.size()));
+                while (tries > 0 && !this.worldObj.isAirBlock(random)) {
+                    random = blocks.get(this.worldObj.rand.nextInt(blocks.size()));
                     --tries;
                 }
-                entity = (EntityLiving) ((MobImprisonmentToolItem) stack.getItem()).getEntityFromStack(stack, this.world, false);
+                entity = (EntityLiving) ((MobImprisonmentToolItem) stack.getItem()).getEntityFromStack(stack, this.worldObj, false);
                 entity.setUniqueId(UUID.randomUUID());
-                entity.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+                entity.onInitialSpawn(worldObj.getDifficultyForLocation(pos), null);
                 entity.setPosition(random.getX() + 0.5, random.getY(), random.getZ() + 0.5);
-                this.world.spawnEntity(entity);
+                this.worldObj.spawnEntityInWorld(entity); //TODO  this.worldObj.spawnEntity(entity)
                 experienceTank.drain((int) (entity.getHealth() * 2), true);
             }
             --spawnAmount;

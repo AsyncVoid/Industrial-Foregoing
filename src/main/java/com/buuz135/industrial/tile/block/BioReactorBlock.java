@@ -24,7 +24,7 @@ public class BioReactorBlock extends CustomOrientedBlock<BioReactorTile> {
 
     public BioReactorBlock() {
         super("bioreactor", BioReactorTile.class, Material.ROCK, 2000, 10);
-        itemsAccepted = new ArrayList<>();
+        itemsAccepted = new ArrayList<ItemStack>();
     }
 
     @Override

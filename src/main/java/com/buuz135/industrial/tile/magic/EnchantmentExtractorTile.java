@@ -117,7 +117,8 @@ public class EnchantmentExtractorTile extends CustomElectricMachine {
     }
 
     private boolean hasBooks() {
-        return !inBook.getStackInSlot(0).isEmpty();
+    	//TODO return !inBook.getStackInSlot(0).isEmpty();
+        return inBook.getStackInSlot(0) != null;
     }
 
     private ItemStack getItem() {
@@ -127,22 +128,28 @@ public class EnchantmentExtractorTile extends CustomElectricMachine {
     @Override
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-
-        if (!hasBooks() || getItem().isEmpty()) return 0;
+        				//TODO  getItem().isEmpty()
+        if (!hasBooks() || getItem() == null) return 0;
         ItemStack enchantedItem = getItem();
-        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK);
-        if (ItemHandlerHelper.insertItem(outEnchanted, enchantedBook, true).isEmpty() && ItemHandlerHelper.insertItem(outItem, enchantedItem, true).isEmpty()) {
+        ItemStack enchantedBook = new ItemStack(Items.ENCHANTED_BOOK); //TODO .isEmpty()
+        if (ItemHandlerHelper.insertItem(outEnchanted, enchantedBook, true) == null && ItemHandlerHelper.insertItem(outItem, enchantedItem, true) == null) {
             NBTTagCompound base = (NBTTagCompound) enchantedItem.getEnchantmentTagList().get(0);
             Items.ENCHANTED_BOOK.addEnchantment(enchantedBook, new EnchantmentData(Enchantment.getEnchantmentByID(base.getShort("id")), base.getShort("lvl")));
             enchantedItem.getEnchantmentTagList().removeTag(0);
             ItemHandlerHelper.insertItem(outEnchanted, enchantedBook, false);
             ItemHandlerHelper.insertItem(outItem, enchantedItem.copy(), false);
-            inBook.getStackInSlot(0).setCount(inBook.getStackInSlot(0).getCount() - 1);
-            enchantedItem.setCount(enchantedItem.getCount() - 1);
+            //TODO inBook.getStackInSlot(0).setCount(inBook.getStackInSlot(0).getCount() - 1);
+            inBook.getStackInSlot(0).stackSize -= 1;
+            enchantedItem.stackSize -= 1;
+            if(inBook.getStackInSlot(0).stackSize < 1)
+            	inBook.setStackInSlot(0, null);
+            if(enchantedItem.stackSize < 1)
+            	inEnchanted.setStackInSlot(0, null);
+            
+            //TODO enchantedItem.setCount(enchantedItem.getCount() - 1);
             return 500;
         }
 
         return 0;
     }
-
 }

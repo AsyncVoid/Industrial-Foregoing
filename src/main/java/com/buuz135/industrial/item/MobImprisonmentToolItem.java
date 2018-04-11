@@ -28,8 +28,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack stack = player.getHeldItem(hand);
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        //ItemStack stack = player.getHeldItem(hand);
         if (player.getEntityWorld().isRemote) return EnumActionResult.FAIL;
         if (!containsEntity(stack)) return EnumActionResult.FAIL;
         Entity entity = getEntityFromStack(stack, worldIn, true);
@@ -37,7 +37,7 @@ public class MobImprisonmentToolItem extends IFCustomItem {
         entity.setPositionAndRotation(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, 0, 0);
         stack.setTagCompound(new NBTTagCompound());
         player.setHeldItem(hand, stack);
-        worldIn.spawnEntity(entity);
+        worldIn.spawnEntityInWorld(entity);
         if (entity instanceof EntityLiving) ((EntityLiving) entity).playLivingSound();
         return EnumActionResult.SUCCESS;
     }
@@ -47,11 +47,13 @@ public class MobImprisonmentToolItem extends IFCustomItem {
         if (target.getEntityWorld().isRemote) return false;
         if (target instanceof EntityPlayer || !target.isNonBoss()) return false;
         if (containsEntity(stack)) return false;
-        String entityID = EntityList.getKey(target).toString();
+        //TODO: EntityList.getKey(target).toString();
+        String entityID = EntityList.getEntityString(target);
         if (isBlacklisted(entityID)) return false;
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("entity", entityID);
-        nbt.setInteger("id", EntityList.getID(target.getClass()));
+        //TODO: nbt.setInteger("id", EntityList.getID(target.getClass()));
+        nbt.setInteger("id", EntityList.getEntityID(target));
         target.writeToNBT(nbt);
         stack.setTagCompound(nbt);
         playerIn.swingArm(hand);
@@ -66,7 +68,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     }
 
     public boolean containsEntity(ItemStack stack) {
-        return !stack.isEmpty() && stack.hasTagCompound() && stack.getTagCompound().hasKey("entity");
+    	//TODO
+        return !(stack == null) && stack.hasTagCompound() && stack.getTagCompound().hasKey("entity");
     }
 
     @Override
@@ -82,7 +85,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     }
 
     public Entity getEntityFromStack(ItemStack stack, World world, boolean withInfo) {
-        Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(stack.getTagCompound().getString("entity")), world);
+        //TODO: Entity entity = EntityList.createEntityByIDFromName(new ResourceLocation(stack.getTagCompound().getString("entity")), world);
+    	Entity entity = EntityList.createEntityByIDFromName(stack.getTagCompound().getString("entity"), world);
         if (withInfo) entity.readFromNBT(stack.getTagCompound());
         return entity;
     }
@@ -93,8 +97,8 @@ public class MobImprisonmentToolItem extends IFCustomItem {
 
     @Override
     public IRecipe getRecipe() {
-        return new ShapedRecipes(3, 3, new ItemStack[]{ItemStack.EMPTY, new ItemStack(ItemRegistry.plastic), ItemStack.EMPTY,
+        return new ShapedRecipes(3, 3, new ItemStack[]{null, new ItemStack(ItemRegistry.plastic), null,
                 new ItemStack(ItemRegistry.plastic), new ItemStack(Items.GHAST_TEAR), new ItemStack(ItemRegistry.plastic),
-                ItemStack.EMPTY, new ItemStack(ItemRegistry.plastic), ItemStack.EMPTY}, new ItemStack(this));
+                null, new ItemStack(ItemRegistry.plastic), null}, new ItemStack(this));
     }
 }

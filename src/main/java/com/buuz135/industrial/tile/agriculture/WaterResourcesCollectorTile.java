@@ -52,17 +52,17 @@ public class WaterResourcesCollectorTile extends WorkingAreaElectricMachine {
     @Override
     public float work() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        if (this.world.rand.nextBoolean() && this.world.rand.nextBoolean()) return 1;
+        if (this.worldObj.rand.nextBoolean() && this.worldObj.rand.nextBoolean()) return 1;
         List<BlockPos> blockPos = BlockUtils.getBlockPosInAABB(getWorkingArea());
         boolean allWaterSources = true;
         for (BlockPos pos : blockPos) {
-            IBlockState state = this.world.getBlockState(pos);
+            IBlockState state = this.worldObj.getBlockState(pos);
             if (!(state.getBlock().equals(FluidRegistry.WATER.getBlock()) && state.getBlock().getMetaFromState(state) == 0))
                 allWaterSources = false;
         }
         if (allWaterSources) {
-            LootContext.Builder lootcontext = new LootContext.Builder((WorldServer) this.world);
-            List<ItemStack> items = this.world.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING).generateLootForPools(this.world.rand, lootcontext.build());
+            LootContext.Builder lootcontext = new LootContext.Builder((WorldServer) this.worldObj);
+            List<ItemStack> items = this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING).generateLootForPools(this.worldObj.rand, lootcontext.build());
             for (ItemStack stack : items) {
                 ItemHandlerHelper.insertItem(outFish, stack, false);
             }

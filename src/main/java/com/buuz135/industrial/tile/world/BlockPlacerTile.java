@@ -5,6 +5,7 @@ import com.buuz135.industrial.tile.WorkingAreaElectricMachine;
 import com.buuz135.industrial.utils.BlockUtils;
 import com.buuz135.industrial.utils.WorkUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -56,22 +57,34 @@ public class BlockPlacerTile extends WorkingAreaElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
         List<BlockPos> blockPosList = BlockUtils.getBlockPosInAABB(getWorkingArea());
         for (BlockPos pos : blockPosList) {
-            if (this.world.isAirBlock(pos)) {
-                ItemStack stack = getFirstStackHasBlock();
-                if (stack.isEmpty()) return 0;
-                this.world.setBlockState(pos, Block.getBlockFromItem(stack.getItem()).getDefaultState());
-                stack.setCount(stack.getCount() - 1);
+            if (this.worldObj.isAirBlock(pos)) {
+            	int slot = getFirstSlotHasBlock();
+                //TODO ItemStack stack = getFirstStackHasBlock();
+                if (slot < 0)  //stack == null TODO stack.isEmpty()
+                	return 0; 
+                ItemStack stack = inItems.getStackInSlot(slot);
+                this.worldObj.setBlockState(pos, Block.getBlockFromItem(stack.getItem()).getDefaultState());
+                stack.stackSize -= 1;  //TODO stack.setCount(stack.stackSize - 1)
+                if(stack.stackSize < 1)
+                	inItems.setStackInSlot(slot, null);
                 return 1;
             }
         }
         return 0;
     }
 
-    private ItemStack getFirstStackHasBlock() {
-        for (int i = 0; i < inItems.getSlots(); ++i) {
-            if (!inItems.getStackInSlot(i).isEmpty() && !Block.getBlockFromItem(inItems.getStackInSlot(i).getItem()).equals(Blocks.AIR))
+    /*private ItemStack getFirstStackHasBlock() {
+        for (int i = 0; i < inItems.getSlots(); ++i) {  //TODO !inItems.getStackInSlot(i).isEmpty()
+            if (inItems.getStackInSlot(i) != null && !Block.getBlockFromItem(inItems.getStackInSlot(i).getItem()).equals(Blocks.AIR))
                 return inItems.getStackInSlot(i);
         }
-        return ItemStack.EMPTY;
+        return null;  //TODO ItemStack.EMPTY
+    }*/
+    private int getFirstSlotHasBlock() {
+        for (int i = 0; i < inItems.getSlots(); ++i) {
+            if (inItems.getStackInSlot(i) != null && !Block.getBlockFromItem(inItems.getStackInSlot(i).getItem()).equals(Blocks.AIR))
+                return i;
+        }
+        return -1;
     }
 }

@@ -22,7 +22,7 @@ public class SludgeRefinerBlock extends CustomOrientedBlock<SludgeRefinerTile> {
 
     public SludgeRefinerBlock() {
         super("sludge_refiner", SludgeRefinerTile.class, Material.ROCK, 200, 10);
-        itemStackWeightedItems = new ArrayList<>();
+        itemStackWeightedItems = new ArrayList<ItemStackWeightedItem>();
     }
 
     @Override

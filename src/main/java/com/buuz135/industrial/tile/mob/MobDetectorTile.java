@@ -29,9 +29,10 @@ public class MobDetectorTile extends WorkingAreaElectricMachine {
     @Override
     public float work() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        List<EntityLiving> living = this.world.getEntitiesWithinAABB(EntityLiving.class, getWorkingArea());
+        List<EntityLiving> living = this.worldObj.getEntitiesWithinAABB(EntityLiving.class, getWorkingArea());
         redstoneSignal = living.size() > 15 ? 15 : living.size();
-        this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
+        this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+        //TODO this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
         return 1;
     }
 

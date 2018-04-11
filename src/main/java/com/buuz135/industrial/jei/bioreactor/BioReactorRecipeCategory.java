@@ -32,12 +32,12 @@ public class BioReactorRecipeCategory implements IRecipeCategory<BioReactorRecip
     public String getTitle() {
         return "Bioreactor accepted items";
     }
-
+/*
     @Override
     public String getModName() {
         return Reference.NAME;
     }
-
+*/
     @Override
     public IDrawable getBackground() {
         return guiHelper.createDrawable(new ResourceLocation(Reference.MOD_ID, "textures/gui/jei.png"), 0, 0, 82, 26);
@@ -65,6 +65,18 @@ public class BioReactorRecipeCategory implements IRecipeCategory<BioReactorRecip
 
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
-        return new ArrayList<>();
+        return new ArrayList<String>();
     }
+
+	@Override
+	public void drawAnimations(Minecraft arg0) {
+		//TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRecipe(IRecipeLayout arg0, BioReactorRecipeWrapper arg1) {
+		//TODO Auto-generated method stub
+		
+	}
 }

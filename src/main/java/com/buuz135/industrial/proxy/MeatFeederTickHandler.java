@@ -14,7 +14,8 @@ public class MeatFeederTickHandler {
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             if (player.getFoodStats().needFood()) {
                 for (ItemStack stack : player.inventory.mainInventory) {
-                    if (stack.getItem().equals(ItemRegistry.meatFeederItem)) {
+                	if (stack == null) continue;//TODO dont need to check null
+                    if (stack.getItem().equals(ItemRegistry.meatFeederItem)) { 
                         int filledAmount = ((MeatFeederItem) stack.getItem()).getFilledAmount(stack);
                         if (filledAmount >= 200) {
                             ((MeatFeederItem) stack.getItem()).drain(stack, 200);

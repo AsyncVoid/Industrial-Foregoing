@@ -33,7 +33,7 @@ public class AnimalByproductRecolectorTile extends WorkingAreaElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
 
         AxisAlignedBB area = getWorkingArea();
-        List<EntityAgeable> animals = this.world.getEntitiesWithinAABB(EntityAgeable.class, area);
+        List<EntityAgeable> animals = this.worldObj.getEntitiesWithinAABB(EntityAgeable.class, area);
         int totalFluidAdded = 0;
         for (EntityAgeable animal : animals) {
             int toFill = animal.isChild() ? ((AnimalByproductRecolectorBlock) this.getBlockType()).getSewageBaby() : ((AnimalByproductRecolectorBlock) this.getBlockType()).getSewageAdult();
@@ -51,6 +51,4 @@ public class AnimalByproductRecolectorTile extends WorkingAreaElectricMachine {
     public AxisAlignedBB getWorkingArea() {
         return new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(), this.pos.getX() + 1, this.pos.getY() + 1, this.pos.getZ() + 1).offset(new BlockPos(0, 1, 0)).expand(getRadius(), 0, getRadius());
     }
-
-
 }

@@ -53,8 +53,8 @@ public class SludgeRefinerTile extends CustomElectricMachine {
 
         if (tank.getFluid() != null && tank.getFluidAmount() >= 1000) {
             SludgeRefinerBlock block = (SludgeRefinerBlock) this.getBlockType();
-            ItemStackWeightedItem itemStack = WeightedRandom.getRandomItem(this.world.rand, block.getItemStackWeightedItems());
-            if (ItemHandlerHelper.insertItem(outItems, itemStack.getStack(), true).isEmpty()) {
+            ItemStackWeightedItem itemStack = WeightedRandom.getRandomItem(this.worldObj.rand, block.getItemStackWeightedItems());
+            if (ItemHandlerHelper.insertItem(outItems, itemStack.getStack(), true) == null) { //TODO .isEmpty()
                 tank.drain(1000, true);
                 ItemHandlerHelper.insertItem(outItems, itemStack.getStack().copy(), false);
                 return 1;

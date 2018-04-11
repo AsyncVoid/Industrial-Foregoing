@@ -60,11 +60,23 @@ public class LaserRecipeCategory implements IRecipeCategory<LaserRecipeWrapper> 
 
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
-        return new ArrayList<>();
+        return new ArrayList<String>();
     }
-
+/*
     @Override
     public String getModName() {
         return Reference.NAME;
     }
+*/
+	@Override
+	public void drawAnimations(Minecraft arg0) {
+		//TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRecipe(IRecipeLayout arg0, LaserRecipeWrapper arg1) {
+		//TODO Auto-generated method stub
+		
+	}
 }

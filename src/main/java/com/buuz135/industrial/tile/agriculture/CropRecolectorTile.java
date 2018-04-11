@@ -40,10 +40,21 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
 
     public CropRecolectorTile() {
         super(CropRecolectorTile.class.getName().hashCode(), 1, 0, true);
-        woodCache = new PriorityQueue<>(Comparator.comparingDouble(value -> ((BlockPos) value).distanceSq(((BlockPos) value).getX(), pos.getY(), ((BlockPos) value).getZ())).reversed());
-        leavesCache = new PriorityQueue<>(Comparator.comparingDouble(value -> ((BlockPos) value).distanceSq(((BlockPos) value).getX(), pos.getY(), ((BlockPos) value).getZ())).reversed());
+        //TODO woodCache = new PriorityQueue<BlockPos>(Comparator.comparingDouble(value -> ((BlockPos) value).distanceSq(((BlockPos) value).getX(), pos.getY(), ((BlockPos) value).getZ())).reversed());
+        //TODO leavesCache = new PriorityQueue<BlockPos>(Comparator.comparingDouble(value -> ((BlockPos) value).distanceSq(((BlockPos) value).getX(), pos.getY(), ((BlockPos) value).getZ())).reversed());
+        woodCache = new PriorityQueue<BlockPos>(new DistanceComparator());
+        leavesCache = new PriorityQueue<BlockPos>(new DistanceComparator());
     }
 
+    class DistanceComparator implements Comparator<BlockPos> {
+        @Override
+        public int compare(BlockPos pos1, BlockPos pos2) {
+        	double dist1 = pos1.distanceSq(pos1.getX(), pos.getY(), pos1.getZ());
+        	double dist2 = pos2.distanceSq(pos2.getX(), pos.getY(), pos2.getZ());
+            return dist1 < dist2 ? -1 : dist1 == dist2 ? 0 : 1;
+        }
+    }
+    
     @Override
     protected void initializeInventories() {
         super.initializeInventories();
@@ -84,15 +95,15 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
         boolean treeOperation = false;
         if (pointer < blockPos.size()) {
             BlockPos pos = blockPos.get(pointer);
-            IBlockState state = this.world.getBlockState(blockPos.get(pointer));
+            IBlockState state = this.worldObj.getBlockState(blockPos.get(pointer));
             if ((state.getBlock() instanceof BlockCrops && ((BlockCrops) state.getBlock()).isMaxAge(state)) || (state.getBlock() instanceof BlockNetherWart && state.getValue(BlockNetherWart.AGE) >= 3)) {
-                List<ItemStack> drops = state.getBlock().getDrops(this.world, blockPos.get(pointer), state, 0);
+                List<ItemStack> drops = state.getBlock().getDrops(this.worldObj, blockPos.get(pointer), state, 0);
                 if (canInsertAll(drops, outItems)) {
                     insertItemsAndRemove(drops, pos, outItems);
                 }
-            } else if (BlockUtils.isLog(this.world, pos)) {
+            } else if (BlockUtils.isLog(this.worldObj, pos)) {
                 if (woodCache.isEmpty()) {
-                    checkForTrees(this.world, pos);
+                    checkForTrees(this.worldObj, pos);
                 }
                 needPointerIncrease = false;
                 treeOperation = true;
@@ -104,14 +115,14 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
                 }
                 if (woodCache.isEmpty()) needPointerIncrease = true;
             } else if ((state.getBlock() instanceof BlockCactus || state.getBlock() instanceof BlockReed)) {
-                if (state.getBlock().equals(this.world.getBlockState(pos.offset(EnumFacing.UP, 2)).getBlock())) {
-                    List<ItemStack> drops = state.getBlock().getDrops(this.world, blockPos.get(pointer), state, 0);
+                if (state.getBlock().equals(this.worldObj.getBlockState(pos.offset(EnumFacing.UP, 2)).getBlock())) {
+                    List<ItemStack> drops = state.getBlock().getDrops(this.worldObj, blockPos.get(pointer), state, 0);
                     if (canInsertAll(drops, outItems)) {
                         insertItemsAndRemove(drops, pos.offset(EnumFacing.UP, 2), outItems);
                     }
                 }
-                if (state.getBlock().equals(this.world.getBlockState(pos.offset(EnumFacing.UP, 1)).getBlock())) {
-                    List<ItemStack> drops = state.getBlock().getDrops(this.world, blockPos.get(pointer), state, 0);
+                if (state.getBlock().equals(this.worldObj.getBlockState(pos.offset(EnumFacing.UP, 1)).getBlock())) {
+                    List<ItemStack> drops = state.getBlock().getDrops(this.worldObj, blockPos.get(pointer), state, 0);
                     if (canInsertAll(drops, outItems)) {
                         insertItemsAndRemove(drops, pos.offset(EnumFacing.UP, 1), outItems);
                     }
@@ -141,7 +152,7 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
     }
 
     public void checkForTrees(World world, BlockPos current) {
-        Stack<BlockPos> tree = new Stack<>();
+        Stack<BlockPos> tree = new Stack<BlockPos>();
         tree.push(current);
         while (!tree.isEmpty()) {
             BlockPos checking = tree.pop();
@@ -162,8 +173,8 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
 
     private boolean canInsertAll(List<ItemStack> drops, ItemStackHandler outItems) {
         boolean canInsert = true;
-        for (ItemStack stack : drops) {
-            if (!ItemHandlerHelper.insertItem(outItems, stack, true).isEmpty()) {
+        for (ItemStack stack : drops) { //TODO !.isEmpty()
+            if (ItemHandlerHelper.insertItem(outItems, stack, true) != null) {
                 canInsert = false;
                 break;
             }
@@ -176,19 +187,19 @@ public class CropRecolectorTile extends WorkingAreaElectricMachine {
             ItemHandlerHelper.insertItem(outItems, stack, false);
         }
         sludge.fill(new FluidStack(FluidsRegistry.SLUDGE, ((CropRecolectorBlock) this.getBlockType()).getSludgeOperation()), true);
-        this.world.setBlockToAir(blockPos);
+        this.worldObj.setBlockToAir(blockPos);
     }
 
     private void chop(Queue<BlockPos> cache) {
         BlockPos p = cache.peek();
-        if (BlockUtils.isLeaves(world, p) || BlockUtils.isLog(world, p)) {
-            IBlockState s = world.getBlockState(p);
-            List<ItemStack> drops = s.getBlock().getDrops(world, p, s, 0);
-            for (ItemStack drop : drops) {
-                if (!ItemHandlerHelper.insertItem(outItems, drop, true).isEmpty()) break;
+        if (BlockUtils.isLeaves(worldObj, p) || BlockUtils.isLog(worldObj, p)) {
+            IBlockState s = worldObj.getBlockState(p);
+            List<ItemStack> drops = s.getBlock().getDrops(worldObj, p, s, 0);
+            for (ItemStack drop : drops) { //TODO !.isEmpty
+                if (ItemHandlerHelper.insertItem(outItems, drop, true) != null) break;
                 ItemHandlerHelper.insertItem(outItems, drop, false);
             }
-            world.setBlockToAir(p);
+            worldObj.setBlockToAir(p);
             sludge.fill(new FluidStack(FluidsRegistry.SLUDGE, ((CropRecolectorBlock) this.getBlockType()).getSludgeOperation()), true);
 
         }

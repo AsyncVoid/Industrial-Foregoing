@@ -86,7 +86,7 @@ public abstract class WorkingAreaElectricMachine extends CustomElectricMachine {
 
     @Override
     protected float performWork() {
-        if (this.world.isBlockPowered(this.pos) == !hasAddon(RedstoneInvertedAddon.class) && !(this instanceof MobDetectorTile))
+        if (this.worldObj.isBlockPowered(this.pos) == !hasAddon(RedstoneInvertedAddon.class) && !(this instanceof MobDetectorTile))
             return 0;
         float work = 0;
         for (int i = 0; i < getActionsWork(); ++i) {

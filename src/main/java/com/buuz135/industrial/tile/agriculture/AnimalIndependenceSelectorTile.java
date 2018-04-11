@@ -22,7 +22,7 @@ public class AnimalIndependenceSelectorTile extends WorkingAreaElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
 
         AxisAlignedBB area = getWorkingArea();
-        List<EntityAgeable> animals = this.world.getEntitiesWithinAABB(EntityAgeable.class, area);
+        List<EntityAgeable> animals = this.worldObj.getEntitiesWithinAABB(EntityAgeable.class, area);
         if (animals.size() == 0) return 0;
         EntityAgeable animal = animals.get(0);
         while (animal.isChild() == this.hasAddon(AdultFilterAddonItem.class) && animals.indexOf(animal) + 1 < animals.size())
@@ -40,6 +40,5 @@ public class AnimalIndependenceSelectorTile extends WorkingAreaElectricMachine {
         BlockPos corner1 = new BlockPos(0, 0, 0).offset(f, getRadius() + 1);
         return new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(), this.pos.getX() + 1, this.pos.getY() + 1, this.pos.getZ() + 1).offset(corner1).expand(getRadius(), 0, getRadius()).setMaxY(this.getPos().getY() + getHeight());
     }
-
 
 }

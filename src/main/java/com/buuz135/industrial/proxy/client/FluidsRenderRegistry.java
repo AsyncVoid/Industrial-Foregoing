@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 
@@ -25,11 +26,11 @@ public class FluidsRenderRegistry {
     }
 
     public static void register(IFCustomFluidBlock base) {
-        Item fluid = Item.getItemFromBlock(base);
-
-        ModelBakery.registerItemVariants(fluid);
+        //Item fluid = Item.getItemFromBlock(base);
+        
+        //ModelBakery.registerItemVariants(fluid);
         FluidStateMapper mapper = new FluidStateMapper(base.getName());
-        ModelLoader.setCustomMeshDefinition(fluid, mapper);
+        //ModelLoader.setCustomMeshDefinition(fluid, mapper);
         ModelLoader.setCustomStateMapper(base, mapper);
     }
 

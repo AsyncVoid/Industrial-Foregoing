@@ -37,14 +37,22 @@ public class BioReactorTile extends CustomElectricMachine {
             }
 
             @Override
-            public int getSlotLimit(int slot) {
+            public int getStackLimit(int slot, ItemStack stack) { //TODO getSlotLimit(int slot)
                 return 16;
             }
         };
         this.addInventory(new CustomColoredItemHandler(input, EnumDyeColor.BLUE, "Input items", 18 * 5, 25, 3, 3) {
             @Override
             public boolean canInsertItem(int slot, ItemStack stack) {
-                return ((BioReactorBlock) BioReactorTile.this.getBlockType()).getItemsAccepted().stream().anyMatch(stack1 -> stack.getItem().equals(stack1.getItem())) && !alreadyContains(input, stack, 16);
+            	for(ItemStack stack1 : ((BioReactorBlock) BioReactorTile.this.getBlockType()).getItemsAccepted())
+            	{
+            		if(stack.getItem().equals(stack1.getItem()))
+            		{
+            			return !alreadyContains(input, stack, 16);
+            		}
+            	}
+            	return false;
+                //TODO return ((BioReactorBlock) BioReactorTile.this.getBlockType()).getItemsAccepted().stream().anyMatch(stack1 -> stack.getItem().equals(stack1.getItem())) && !alreadyContains(input, stack, 16);
             }
 
             @Override
@@ -73,8 +81,13 @@ public class BioReactorTile extends CustomElectricMachine {
         if (tank.getFluid() == null || (stack.amount + tank.getFluidAmount() <= tank.getCapacity())) {
             tank.fill(stack, true);
             for (int i = 0; i < input.getSlots(); ++i) {
-                if (!input.getStackInSlot(i).isEmpty())
-                    input.getStackInSlot(i).setCount(input.getStackInSlot(i).getCount() - 1);
+                if (input.getStackInSlot(i) != null) { //TODO !.isEmpty()
+                	ItemStack is = input.getStackInSlot(i);
+                	is.stackSize -= 1;
+                    if(is.stackSize < 1)
+                    	input.setStackInSlot(i, null);
+                }
+                //TODO input.getStackInSlot(i).setCount(input.getStackInSlot(i).getCount() - 1);
             }
             return 1;
         }
@@ -82,8 +95,9 @@ public class BioReactorTile extends CustomElectricMachine {
     }
 
     private boolean alreadyContains(ItemStackHandler handler, ItemStack stack, int amountAtleast) {
-        for (int i = 0; i < handler.getSlots(); ++i) {
-            if (stack.getItem().equals(handler.getStackInSlot(i).getItem()) && stack.getMetadata() == handler.getStackInSlot(i).getMetadata() && handler.getStackInSlot(i).getCount() >= amountAtleast)
+        
+    	for (int i = 0; i < handler.getSlots(); ++i) { //TODO .getCount()
+            if (stack.getItem().equals(handler.getStackInSlot(i).getItem()) && stack.getMetadata() == handler.getStackInSlot(i).getMetadata() && handler.getStackInSlot(i).stackSize >= amountAtleast)
                 return true;
         }
         return false;
@@ -93,7 +107,7 @@ public class BioReactorTile extends CustomElectricMachine {
     public int getItemAmount() {
         int am = 0;
         for (int i = 0; i < input.getSlots(); ++i) {
-            if (!input.getStackInSlot(i).isEmpty()) ++am;
+            if (input.getStackInSlot(i) != null) ++am; //TODO !.isEmpty()
         }
         return am;
     }
@@ -113,6 +127,4 @@ public class BioReactorTile extends CustomElectricMachine {
     public void protectedUpdate() {
         super.protectedUpdate();
     }
-
-
 }

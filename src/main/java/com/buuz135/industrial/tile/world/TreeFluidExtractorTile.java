@@ -41,17 +41,17 @@ public class TreeFluidExtractorTile extends SidedTileEntity {
     protected void innerUpdate() {
         if (WorkUtils.isDisabled(this.getBlockType())) return;
         if (this.getWorld().isRemote) return;
-        if (!BlockUtils.isLog(this.world, this.pos.offset(this.getFacing().getOpposite()))) progress = 0;
-        if (tick % 5 == 0 && BlockUtils.isLog(this.world, this.pos.offset(this.getFacing().getOpposite()))) {
+        if (!BlockUtils.isLog(this.worldObj, this.pos.offset(this.getFacing().getOpposite()))) progress = 0;
+        if (tick % 5 == 0 && BlockUtils.isLog(this.worldObj, this.pos.offset(this.getFacing().getOpposite()))) {
             tank.fill(new FluidStack(FluidsRegistry.LATEX, 1), true);
-            if (id == 0) id = this.world.rand.nextInt();
-            if (world.rand.nextDouble() <= 0.005) ++progress;
+            if (id == 0) id = this.worldObj.rand.nextInt();
+            if (worldObj.rand.nextDouble() <= 0.005) ++progress;
             if (progress > 7) {
                 progress = 0;
-                this.world.setBlockToAir(this.pos.offset(this.getFacing().getOpposite()));
+                this.worldObj.setBlockToAir(this.pos.offset(this.getFacing().getOpposite()));
             }
             if (tick > 404 && progress > 0) {
-                this.world.sendBlockBreakProgress(this.world.rand.nextInt(), this.pos.offset(this.getFacing().getOpposite()), progress - 1);
+                this.worldObj.sendBlockBreakProgress(this.worldObj.rand.nextInt(), this.pos.offset(this.getFacing().getOpposite()), progress - 1);
                 tick = 0;
             }
         }
@@ -66,13 +66,14 @@ public class TreeFluidExtractorTile extends SidedTileEntity {
 
     @Override
     protected void processFluidItems(ItemStackHandler fluidItems) {
-        ItemStack stack = fluidItems.getStackInSlot(0);
-        if (!stack.isEmpty() && fluidItems.getStackInSlot(1).isEmpty() && tank.getFluidAmount() >= 1000) {
+        ItemStack stack = fluidItems.getStackInSlot(0);  //TODO !stack.isEmpty() && fluidItems.getStackInSlot(1).isEmpty()
+        if (stack != null && fluidItems.getStackInSlot(1) != null && tank.getFluidAmount() >= 1000) {
             ItemStack out = UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, FluidsRegistry.LATEX);
             tank.drain(1000, true);
-            stack.setCount(stack.getCount() - 1);
+            stack.stackSize -= 1;  //TODO stack.setCount(stack.getCount() - 1)
+            if(stack.stackSize < 1)
+            	fluidItems.setStackInSlot(0, null);
             fluidItems.setStackInSlot(1, out);
         }
     }
-
 }

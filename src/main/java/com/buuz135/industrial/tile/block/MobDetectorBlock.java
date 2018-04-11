@@ -65,7 +65,7 @@ public class MobDetectorBlock extends CustomOrientedBlock<MobDetectorTile> {
                 'p', ItemRegistry.plastic,
                 'r', Items.REPEATER,
                 'c', Items.COMPARATOR,
-                'i', Blocks.OBSERVER,
+                'i', Items.COMPARATOR,   //TODO 'i', Blocks.OBSERVER,
                 'm', TeslaCoreLib.machineCase);
     }
 }

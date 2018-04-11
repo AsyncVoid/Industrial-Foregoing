@@ -36,7 +36,7 @@ public class WaterCondesatorTile extends SidedTileEntity {
     private int getWaterSources() {
         int sources = 0;
         for (EnumFacing facing : EnumFacing.values()) {
-            IBlockState state = this.world.getBlockState(this.getPos().offset(facing));
+            IBlockState state = this.worldObj.getBlockState(this.getPos().offset(facing));
             if (state.getBlock().equals(FluidRegistry.WATER.getBlock()) && state.getBlock().getMetaFromState(state) == 0)
                 ++sources;
         }

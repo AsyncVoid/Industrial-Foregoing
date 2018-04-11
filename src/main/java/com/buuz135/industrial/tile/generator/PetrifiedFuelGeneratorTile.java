@@ -24,12 +24,11 @@ public class PetrifiedFuelGeneratorTile extends CustomGeneratorMachine {
 
     private ItemStackHandler inStackHandler;
     private ItemStackHandler invisibleSlot;
-    private ItemStack current = ItemStack.EMPTY;
+    private ItemStack current = null; //TODO ItemStack.EMPTY
     private int burnTime = 0;
 
     public PetrifiedFuelGeneratorTile() {
         super(PetrifiedFuelGeneratorTile.class.getName().hashCode());
-
     }
 
     @Override
@@ -76,31 +75,50 @@ public class PetrifiedFuelGeneratorTile extends CustomGeneratorMachine {
 
     }
 
-    private boolean acceptsInputStack(int slot, ItemStack stack) {
-        return !stack.isEmpty() && TileEntityFurnace.isItemFuel(stack) && !stack.getItem().equals(Items.LAVA_BUCKET) && !stack.getItem().equals(ForgeModContainer.getInstance().universalBucket);
+    private boolean acceptsInputStack(int slot, ItemStack stack) { //TODO !stack.isEmpty()
+        return stack != null && TileEntityFurnace.isItemFuel(stack) && !stack.getItem().equals(Items.LAVA_BUCKET) && !stack.getItem().equals(ForgeModContainer.getInstance().universalBucket);
     }
-
+    /*
     public ItemStack getFirstFuel(boolean replace) {
         if (!replace) return this.current;
         for (int i = 0; i < inStackHandler.getSlots(); ++i) {
-            if (!inStackHandler.getStackInSlot(i).isEmpty()) {
+            if (inStackHandler.getStackInSlot(i) != null) { //TODO !.isEmpty()
                 this.current = new ItemStack(inStackHandler.getStackInSlot(i).getItem(), 1);
                 this.forceSync();
                 return inStackHandler.getStackInSlot(i);
             }
         }
-        return current = ItemStack.EMPTY;
+        return current = null; //TODO ItemStack.EMPTY
+    }*/
+    
+    public int getFirstFuelSlot() { //replace always = true
+        for (int i = 0; i < inStackHandler.getSlots(); ++i) {
+            if (inStackHandler.getStackInSlot(i) != null) { //TODO !.isEmpty()
+                this.current = new ItemStack(inStackHandler.getStackInSlot(i).getItem(), 1);
+                this.forceSync();
+                return i;
+            }
+        }
+        current = null;
+        return -1;
     }
 
     @Override
     public long consumeFuel() { //TODO fix buckets
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        ItemStack temp = this.getFirstFuel(true);
-        if (temp.isEmpty()) {
-            return 0;
-        }
+        int slot = getFirstFuelSlot();
+        if (slot < 0)
+        	return 0;
+        ItemStack temp = inStackHandler.getStackInSlot(slot);
+        //ItemStack temp = this.getFirstFuel(true);
+        //if (temp == null) { //TODO .isEmpty()
+        //    return 0;
+        //}
         burnTime = TileEntityFurnace.getItemBurnTime(temp);
-        temp.setCount(temp.getCount() - 1);
+        temp.stackSize -= 1;
+        if(temp.stackSize < 1)
+        	inStackHandler.setStackInSlot(slot, null);
+        //TODO temp.setCount(temp.getCount() - 1);
         //this.invisibleSlot.setStackInSlot(0,new ItemStack(temp.getItem(),1));
         return (long) burnTime * 100;
     }
@@ -125,6 +143,4 @@ public class PetrifiedFuelGeneratorTile extends CustomGeneratorMachine {
     public ItemStack getCurrent() {
         return current;
     }
-
-
 }

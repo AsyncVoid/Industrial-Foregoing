@@ -20,7 +20,7 @@ public class CropSowerFilterInfoPiece extends BasicRenderedGuiPiece {
     public void drawForegroundLayer(BasicTeslaGuiContainer container, int guiX, int guiY, int mouseX, int mouseY) {
         int i = 0;
         for (ItemStack stack : tile.getFilterStorage()) {
-            if (stack != null && !stack.isEmpty()) {
+            if (stack != null && stack.stackSize > 0) {  //TODO !stack.isEmpty() 
                 ItemStackUtils.renderItemIntoGUI(stack, -18 * 4 + 14 + 18 * (i % 3), 26 + (18 * (i / 3)), 6);
             }
             ++i;

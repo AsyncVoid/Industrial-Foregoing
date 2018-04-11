@@ -39,35 +39,40 @@ public class BlackHoleUnitTile extends SidedTileEntity {
 
     public BlackHoleUnitTile() {
         super(BlackHoleUnitTile.class.getName().hashCode());
-        stack = ItemStack.EMPTY;
+        stack = null; //TODO ItemStack.EMPTY
         amount = 0;
     }
 
     @Override
     protected void innerUpdate() {
         if (WorkUtils.isDisabled(this.getBlockType())) return;
-        if (!inItems.getStackInSlot(0).isEmpty()) {
+        if (inItems.getStackInSlot(0) != null) {  //TODO !.isEmpty()
             ItemStack in = inItems.getStackInSlot(0);
-            if (stack.isEmpty()) {
+            if (stack == null) {		//TODO .isEmpty()
                 stack = in;
                 amount = 0;
             }
-            amount += in.getCount();
-            inItems.setStackInSlot(0, ItemStack.EMPTY);
+            amount += in.stackSize;
+            inItems.setStackInSlot(0, null);  //TODO ItemStack.EMPTY
         }
-        if (outItems.getStackInSlot(0).isEmpty()) {
-            ItemStack stack = this.stack.copy();
-            stack.setCount(Math.min(stack.getMaxStackSize(), amount));
-            amount -= stack.getCount();
-            ItemHandlerHelper.insertItem(outItems, stack, false);
-        } else if (outItems.getStackInSlot(0).getCount() < outItems.getStackInSlot(0).getMaxStackSize()) {
+        if (outItems.getStackInSlot(0) == null) {  //TODO .isEmpty()
+        	if(this.stack != null) //UNDO
+        	{
+        		ItemStack stack = this.stack.copy();
+                //TODO stack.setCount(Math.min(stack.getMaxStackSize(), amount));
+                stack.stackSize = Math.min(stack.getMaxStackSize(), amount);
+                amount -= stack.stackSize; //TODO .getCount()
+                ItemHandlerHelper.insertItem(outItems, stack, false);  //TODO .getCount()
+        	}
+        } else if (outItems.getStackInSlot(0).stackSize < outItems.getStackInSlot(0).getMaxStackSize()) {
             ItemStack stack = outItems.getStackInSlot(0);
-            int increment = Math.min(amount, 64 - stack.getCount());
-            stack.setCount(stack.getCount() + increment);
+            int increment = Math.min(amount, 64 - stack.stackSize);
+            //TODO stack.setCount(stack.getCount() + increment);
+            stack.stackSize += increment;
             amount -= increment;
         }
-        if (amount == 0 && outItems.getStackInSlot(0).isEmpty()) {
-            stack = ItemStack.EMPTY;
+        if (amount == 0 && outItems.getStackInSlot(0) == null) { //TODO .isEmpty()
+            stack = null; //TODO ItemStack.EMPTY
         }
     }
 
@@ -160,17 +165,21 @@ public class BlackHoleUnitTile extends SidedTileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound tagCompound = super.writeToNBT(compound);
-        tagCompound.setString(NBT_ITEMSTACK, stack.getItem().getRegistryName().toString());
+        if (stack != null)
+        {
+        	tagCompound.setString(NBT_ITEMSTACK, stack.getItem().getRegistryName().toString());
+        	tagCompound.setInteger(NBT_META, stack.getMetadata());
+        	tagCompound.setTag(NBT_ITEM_NBT, stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound());
+        }
         tagCompound.setInteger(NBT_AMOUNT, amount);
-        tagCompound.setInteger(NBT_META, stack.getMetadata());
-        tagCompound.setTag(NBT_ITEM_NBT, stack.hasTagCompound() ? stack.getTagCompound() : new NBTTagCompound());
         return tagCompound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (!compound.hasKey(NBT_ITEMSTACK)) stack = ItemStack.EMPTY;
+        if (!compound.hasKey(NBT_ITEMSTACK)) 
+        	stack = null; //TODO ItemStack.EMPTY
         else {
             Item item = Item.getByNameOrId(compound.getString(NBT_ITEMSTACK));
             if (item != null) {
@@ -185,8 +194,8 @@ public class BlackHoleUnitTile extends SidedTileEntity {
         }
     }
 
-    public boolean canInsertItem(ItemStack stack) {
-        return Integer.MAX_VALUE >= stack.getCount() + amount && (BlackHoleUnitTile.this.stack.isEmpty() || (stack.getItem() == BlackHoleUnitTile.this.stack.getItem() && stack.getMetadata() == BlackHoleUnitTile.this.stack.getMetadata() && (!(stack.hasTagCompound() && BlackHoleUnitTile.this.stack.hasTagCompound()) || stack.getTagCompound().equals(BlackHoleUnitTile.this.stack.getTagCompound()))));
+    public boolean canInsertItem(ItemStack stack) {	//TODO .getCount()					//TODO .isEmpty
+        return Integer.MAX_VALUE >= stack.stackSize + amount && (BlackHoleUnitTile.this.stack == null || (stack.getItem() == BlackHoleUnitTile.this.stack.getItem() && stack.getMetadata() == BlackHoleUnitTile.this.stack.getMetadata() && (!(stack.hasTagCompound() && BlackHoleUnitTile.this.stack.hasTagCompound()) || stack.getTagCompound().equals(BlackHoleUnitTile.this.stack.getTagCompound()))));
     }
 
     public ItemStack getStack() {
@@ -197,8 +206,8 @@ public class BlackHoleUnitTile extends SidedTileEntity {
         this.stack = stack;
     }
 
-    public int getAmount() {
-        return amount + (outItems.getStackInSlot(0).isEmpty() ? 0 : outItems.getStackInSlot(0).getCount());
+    public int getAmount() { 						//TODO .isEmpty()                    .getCount()
+        return amount + (outItems.getStackInSlot(0) == null ? 0 : outItems.getStackInSlot(0).stackSize);
     }
 
     public void setAmount(int amount) {
@@ -238,7 +247,10 @@ public class BlackHoleUnitTile extends SidedTileEntity {
             double stacks = tile.getAmount() / (double) tile.getStack().getMaxStackSize();
             if (getAmount() <= tile.getStack().getMaxStackSize() && slot == 0) return outItems.getStackInSlot(0);
             ItemStack stack = tile.stack.copy();
-            stack.setCount(slot < (int) stacks ? tile.getStack().getMaxStackSize() : slot == (int) stacks ? (int) ((stacks - tile.getAmount() / tile.getStack().getMaxStackSize()) * tile.getStack().getMaxStackSize()) : 0);
+            //TODO stack.setCount(slot < (int) stacks ? tile.getStack().getMaxStackSize() : slot == (int) stacks ? (int) ((stacks - tile.getAmount() / tile.getStack().getMaxStackSize()) * tile.getStack().getMaxStackSize()) : 0);
+            stack.stackSize = slot < (int) stacks ? tile.getStack().getMaxStackSize() : slot == (int) stacks ? (int) ((stacks - tile.getAmount() / tile.getStack().getMaxStackSize()) * tile.getStack().getMaxStackSize()) : 0;
+            if(stack.stackSize < 1)
+            	stack = null;
             return stack;
         }
 
@@ -254,10 +266,10 @@ public class BlackHoleUnitTile extends SidedTileEntity {
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return outItems.extractItem(0, amount, simulate);
         }
-
+        /*
         @Override
         public int getSlotLimit(int slot) {
             return 64;
-        }
+        }*/
     }
 }

@@ -69,21 +69,30 @@ public class SporesRecreatorTile extends CustomElectricMachine {
     @Override
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        ItemStack stack = getFirstItem();
-        if (!stack.isEmpty() && waterTank.getFluidAmount() >= 500 && ItemHandlerHelper.insertItem(output, stack.copy(), true).isEmpty()) {
+        int slot = getFirstSlot();
+        ItemStack stack = input.getStackInSlot(slot);//getFirstItem(); //TODO !stack.isEmpty()                                        .isEmpty()
+        if (stack != null && waterTank.getFluidAmount() >= 500 && ItemHandlerHelper.insertItem(output, stack.copy(), true) == null) {
             ItemStack out = stack.copy();
-            out.setCount(2);
+            out.stackSize = 2;//TODO out.setCount(2);
             ItemHandlerHelper.insertItem(output, out, false);
             waterTank.drain(500, true);
-            stack.setCount(stack.getCount() - 1);
+            stack.stackSize -= 1;//TODO stack.setCount(stack.getCount() - 1);
+            if(stack.stackSize < 1)
+            	input.setStackInSlot(slot, null);
             return 1;
         }
         return 0;
     }
 
-    private ItemStack getFirstItem() {
-        for (int i = 0; i < input.getSlots(); ++i)
-            if (!input.getStackInSlot(i).isEmpty()) return input.getStackInSlot(i);
-        return ItemStack.EMPTY;
+    private int getFirstSlot() {
+        for (int i = 0; i < input.getSlots(); ++i) //TODO !.isEmpty()
+            if (input.getStackInSlot(i) != null) return i;
+        return -1; //TODO ItemStack.EMPTY
     }
+    /*
+    private ItemStack getFirstItem() {
+        for (int i = 0; i < input.getSlots(); ++i) //TODO !.isEmpty()
+            if (input.getStackInSlot(i) != null) return input.getStackInSlot(i);
+        return null; //TODO ItemStack.EMPTY
+    }*/
 }

@@ -84,21 +84,37 @@ public class LaserBaseTile extends SidedTileEntity {
 
     @Override
     protected void innerUpdate() {
-        if (this.world.isRemote) return;
+        if (this.worldObj.isRemote) return;
         if (WorkUtils.isDisabled(this.getBlockType())) return;
         if (currentWork >= getMaxWork()) {
-            List<ItemStackWeightedItem> items = new ArrayList<>();
+            List<ItemStackWeightedItem> items = new ArrayList<ItemStackWeightedItem>();
+            
+            for(Integer integer : BlockRegistry.laserBaseBlock.getColoreOres().keySet())
+            {
+            	for(ItemStackWeightedItem itemStackWeightedItem : BlockRegistry.laserBaseBlock.getColoreOres().get(integer))
+            	{
+            		int increase = 0;
+                    for (int i = 0; i < lensItems.getSlots(); ++i) {  //TODO !lensItems.getStackInSlot(i).isEmpty()
+                        if (lensItems.getStackInSlot(i) != null && lensItems.getStackInSlot(i).getMetadata() == integer) {
+                            increase += BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
+                        }
+                    }
+                    items.add(new ItemStackWeightedItem(itemStackWeightedItem.getStack(), itemStackWeightedItem.itemWeight + increase));
+            	}
+            }
+            //TODO java 8
+            /*
             BlockRegistry.laserBaseBlock.getColoreOres().keySet().forEach(integer -> BlockRegistry.laserBaseBlock.getColoreOres().get(integer).forEach(itemStackWeightedItem -> {
                 int increase = 0;
-                for (int i = 0; i < lensItems.getSlots(); ++i) {
-                    if (!lensItems.getStackInSlot(i).isEmpty() && lensItems.getStackInSlot(i).getMetadata() == integer) {
+                for (int i = 0; i < lensItems.getSlots(); ++i) {  //TODO !lensItems.getStackInSlot(i).isEmpty()
+                    if (lensItems.getStackInSlot(i) != null && lensItems.getStackInSlot(i).getMetadata() == integer) {
                         increase += BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
                     }
                 }
                 items.add(new ItemStackWeightedItem(itemStackWeightedItem.getStack(), itemStackWeightedItem.itemWeight + increase));
-            }));
-            ItemStack stack = WeightedRandom.getRandomItem(this.world.rand, items).getStack().copy();
-            if (ItemHandlerHelper.insertItem(outItems, stack, true).isEmpty()) {
+            }));*/
+            ItemStack stack = WeightedRandom.getRandomItem(this.worldObj.rand, items).getStack().copy();
+            if (ItemHandlerHelper.insertItem(outItems, stack, true) == null) {   //TODO .isEmpty()
                 ItemHandlerHelper.insertItem(outItems, stack, false);
             }
             currentWork = 0;
@@ -127,8 +143,7 @@ public class LaserBaseTile extends SidedTileEntity {
     }
 
     public void increaseWork() {
-        if(currentWork < getMaxWork())
-            ++currentWork;
+    	if(currentWork < getMaxWork())
+    		++currentWork;
     }
-
 }

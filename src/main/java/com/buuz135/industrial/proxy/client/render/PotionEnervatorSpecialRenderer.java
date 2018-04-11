@@ -19,7 +19,7 @@ public class PotionEnervatorSpecialRenderer extends TileEntitySpecialRenderer<Po
 
     @Override
     public void renderTileEntityAt(PotionEnervatorTile te, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (!te.hasWorld()) return;
+        if (!te.hasWorldObj()) return;   //TODO !te.hasWorld()
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();

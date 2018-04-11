@@ -12,7 +12,7 @@ import com.buuz135.industrial.proxy.ItemRegistry;
 import com.buuz135.industrial.utils.ItemStackWeightedItem;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+//import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandom;
 import net.minecraftforge.oredict.OreDictionary;
@@ -36,9 +36,9 @@ public class JEICustomPlugin implements IModPlugin {
 
     @Override
     public void registerIngredients(IModIngredientRegistration registry) {
-
+    	
     }
-
+/*
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         sludgeRefinerRecipeCategory = new SludgeRefinerRecipeCategory(registry.getJeiHelpers().getGuiHelper());
@@ -48,32 +48,60 @@ public class JEICustomPlugin implements IModPlugin {
         laserRecipeCategory = new LaserRecipeCategory(registry.getJeiHelpers().getGuiHelper());
         registry.addRecipeCategories(laserRecipeCategory);
     }
-
+*/
     @Override
     public void register(IModRegistry registry) {
         int maxWeight = WeightedRandom.getTotalWeight(BlockRegistry.sludgeRefinerBlock.getItemStackWeightedItems());
-        List<SludgeRefinerRecipeWrapper> wrapperList = new ArrayList<>();
-        BlockRegistry.sludgeRefinerBlock.getItemStackWeightedItems().forEach(itemStackWeightedItem -> wrapperList.add(new SludgeRefinerRecipeWrapper(itemStackWeightedItem, maxWeight)));
-        registry.addRecipes(wrapperList, sludgeRefinerRecipeCategory.getUid());
-        registry.addRecipeCatalyst(new ItemStack(BlockRegistry.sludgeRefinerBlock), sludgeRefinerRecipeCategory.getUid());
+        List<SludgeRefinerRecipeWrapper> wrapperList = new ArrayList<SludgeRefinerRecipeWrapper>();
+        //TODO BlockRegistry.sludgeRefinerBlock.getItemStackWeightedItems().forEach(itemStackWeightedItem -> wrapperList.add(new SludgeRefinerRecipeWrapper(itemStackWeightedItem, maxWeight)));
+        for(ItemStackWeightedItem itemStackWeightedItem : BlockRegistry.sludgeRefinerBlock.getItemStackWeightedItems())
+        {
+        	wrapperList.add(new SludgeRefinerRecipeWrapper(itemStackWeightedItem, maxWeight));
+        }
+        
+        //TODO: registry.addRecipes(wrapperList, sludgeRefinerRecipeCategory.getUid());
+        registry.addRecipes(wrapperList);
+        //TODO registry.addRecipeCatalyst(new ItemStack(BlockRegistry.sludgeRefinerBlock), sludgeRefinerRecipeCategory.getUid());
 
 
-        List<BioReactorRecipeWrapper> bioreactor = new ArrayList<>();
-        BlockRegistry.bioReactorBlock.getItemsAccepted().forEach(stack -> bioreactor.add(new BioReactorRecipeWrapper(stack)));
-        registry.addRecipes(bioreactor, bioReactorRecipeCategory.getUid());
-        registry.addRecipeCatalyst(new ItemStack(BlockRegistry.bioReactorBlock), bioReactorRecipeCategory.getUid());
+        List<BioReactorRecipeWrapper> bioreactor = new ArrayList<BioReactorRecipeWrapper>();
+        for(ItemStack stack : BlockRegistry.bioReactorBlock.getItemsAccepted())
+        {
+        	bioreactor.add(new BioReactorRecipeWrapper(stack));
+        }
+        //TODO BlockRegistry.bioReactorBlock.getItemsAccepted().forEach(stack -> bioreactor.add(new BioReactorRecipeWrapper(stack)));
+        //TODO registry.addRecipes(bioreactor, bioReactorRecipeCategory.getUid());
+        registry.addRecipes(bioreactor);
+        //TODO registry.addRecipeCatalyst(new ItemStack(BlockRegistry.bioReactorBlock), bioReactorRecipeCategory.getUid());
 
-        List<ItemStackWeightedItem> item = new ArrayList<>();
-        BlockRegistry.laserBaseBlock.getColoreOres().keySet().forEach(integer -> item.addAll(BlockRegistry.laserBaseBlock.getColoreOres().get(integer)));
+        List<ItemStackWeightedItem> item = new ArrayList<ItemStackWeightedItem>();
+        
+        
+        //TODO BlockRegistry.laserBaseBlock.getColoreOres().keySet().forEach(integer -> item.addAll(BlockRegistry.laserBaseBlock.getColoreOres().get(integer)));
+        for (Integer integer : BlockRegistry.laserBaseBlock.getColoreOres().keySet())
+        {
+        	item.addAll(BlockRegistry.laserBaseBlock.getColoreOres().get(integer));
+        }
+        
         final int laserMaxWeight = WeightedRandom.getTotalWeight(item);
-        List<LaserRecipeWrapper> laserRecipeWrappers = new ArrayList<>();
-        BlockRegistry.laserBaseBlock.getColoreOres().keySet().forEach(integer -> BlockRegistry.laserBaseBlock.getColoreOres().get(integer).forEach(temp -> laserRecipeWrappers.add(new LaserRecipeWrapper(temp, laserMaxWeight, integer))));
-        registry.addRecipes(laserRecipeWrappers, laserRecipeCategory.getUid());
-        registry.addRecipeCatalyst(new ItemStack(BlockRegistry.laserDrillBlock), laserRecipeCategory.getUid());
-        registry.addRecipeCatalyst(new ItemStack(BlockRegistry.laserBaseBlock), laserRecipeCategory.getUid());
+        List<LaserRecipeWrapper> laserRecipeWrappers = new ArrayList<LaserRecipeWrapper>();
+        //TODO BlockRegistry.laserBaseBlock.getColoreOres().keySet().forEach(integer -> BlockRegistry.laserBaseBlock.getColoreOres().get(integer).forEach(temp -> laserRecipeWrappers.add(new LaserRecipeWrapper(temp, laserMaxWeight, integer))));
+        for(Integer integer : BlockRegistry.laserBaseBlock.getColoreOres().keySet())
+        {
+        	for(ItemStackWeightedItem temp : BlockRegistry.laserBaseBlock.getColoreOres().get(integer))
+        	{
+        		laserRecipeWrappers.add(new LaserRecipeWrapper(temp, laserMaxWeight, integer));
+        	}
+        }
+        
+        //TODO registry.addRecipes(laserRecipeWrappers, laserRecipeCategory.getUid());
+        registry.addRecipes(laserRecipeWrappers);
+        //TODO registry.addRecipeCatalyst(new ItemStack(BlockRegistry.laserDrillBlock), laserRecipeCategory.getUid());
+        //TODO registry.addRecipeCatalyst(new ItemStack(BlockRegistry.laserBaseBlock), laserRecipeCategory.getUid());
 
 
         //Descriptions
+        /*//TODO
         registry.addIngredientInfo(Arrays.asList(new ItemStack(ItemRegistry.meatFeederItem)), ItemStack.class, "The meat feeder will keep fed if it has liquid meat. (Don't ask where the meat comes, you won't like it)");
         registry.addIngredientInfo(Arrays.asList(new ItemStack(ItemRegistry.mobImprisonmentToolItem)), ItemStack.class, "This tool can capture mobs to be used in the Mob duplicator.");
         registry.addIngredientInfo(Arrays.asList(new ItemStack(ItemRegistry.tinyDryRubber)), ItemStack.class, "Produced in the latex processing unit.");
@@ -117,6 +145,7 @@ public class JEICustomPlugin implements IModPlugin {
         registry.addIngredientInfo(Arrays.asList(new ItemStack(BlockRegistry.dyeMixerBlock)), ItemStack.class, "Makes dyes more efficiently, needs a lens to select the color.");
         registry.addIngredientInfo(Arrays.asList(new ItemStack(BlockRegistry.enchantmentInvokerBlock)), ItemStack.class, "Enchants items with a level 30 enchant using 3 buckets of essence.");
         registry.addIngredientInfo(Arrays.asList(new ItemStack(BlockRegistry.sporesRecreatorBlock)), ItemStack.class, "Spreads mushrooms spores to grow mushrooms");
+    */
     }
 
     @Override

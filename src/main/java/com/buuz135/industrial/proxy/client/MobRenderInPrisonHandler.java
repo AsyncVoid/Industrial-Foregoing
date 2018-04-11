@@ -13,10 +13,10 @@ public class MobRenderInPrisonHandler {
 
     @SubscribeEvent
     public void onTooltip(RenderTooltipEvent.PostText event) {
-        if (event.getStack() == null || event.getStack().isEmpty()) return;
+        if (event.getStack() == null || event.getStack().stackSize < 1) return;  //TODO event.getStack().isEmpty()
         if (event.getStack().getItem() instanceof MobImprisonmentToolItem && ((MobImprisonmentToolItem) event.getStack().getItem()).containsEntity(event.getStack())) {
             try {
-                Entity entity = EntityList.createEntityByID(event.getStack().getTagCompound().getInteger("id"), Minecraft.getMinecraft().world);
+                Entity entity = EntityList.createEntityByID(event.getStack().getTagCompound().getInteger("id"), Minecraft.getMinecraft().theWorld); //TODO world
                 entity.readFromNBT(event.getStack().getTagCompound());
                 ItemStackUtils.renderEntity((int) (event.getX() + 15 + entity.width), (int) (event.getY() + 58 + entity.height), 15, 0, 0, (EntityLivingBase) entity);
             } catch (NullPointerException e) {

@@ -67,20 +67,28 @@ public class EnchantmentInvokerTile extends CustomElectricMachine {
     @Override
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;//enchantment_invoker
-
-        ItemStack stack = getFirstItem();
-        if (essenceTank.getFluidAmount() >= 3000 && !stack.isEmpty() && ItemHandlerHelper.insertItem(output, stack, true).isEmpty()) {
+        int slot = getFirstItemSlot();
+        ItemStack stack = input.getStackInSlot(slot); //getFirstItem();         //TODO !stack.isEmpty()                                             .isEmpty()
+        if (essenceTank.getFluidAmount() >= 3000 && stack != null && ItemHandlerHelper.insertItem(output, stack, true) == null) {
             essenceTank.drain(3000, true);
-            ItemHandlerHelper.insertItem(output, EnchantmentHelper.addRandomEnchantment(this.world.rand, stack.copy(), 30, true), false);
-            stack.setCount(0);
+            ItemHandlerHelper.insertItem(output, EnchantmentHelper.addRandomEnchantment(this.worldObj.rand, stack.copy(), 30, true), false);
+            input.setStackInSlot(slot, null);
+            //stack.stackSize = 0; //TODO stack.setCount(0);
             return 1;
         }
         return 0;
     }
 
-    private ItemStack getFirstItem() {
-        for (int i = 0; i < input.getSlots(); ++i)
-            if (!input.getStackInSlot(i).isEmpty()) return input.getStackInSlot(i);
-        return ItemStack.EMPTY;
+    private int getFirstItemSlot() {
+        for (int i = 0; i < input.getSlots(); ++i) 
+            if (input.getStackInSlot(i) != null)
+            	return i;
+        return -1; 
     }
+    
+    /*private ItemStack getFirstItem() {
+        for (int i = 0; i < input.getSlots(); ++i) //TODO !input.getStackInSlot(i).isEmpty()
+            if (input.getStackInSlot(i) != null) return input.getStackInSlot(i);
+        return null;  //TODO ItemStack.EMPTY
+    }*/
 }

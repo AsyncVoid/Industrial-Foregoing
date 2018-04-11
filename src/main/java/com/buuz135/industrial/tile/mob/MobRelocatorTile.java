@@ -61,7 +61,10 @@ public class MobRelocatorTile extends WorkingAreaElectricMachine {
     @Override
     public void protectedUpdate() {
         super.protectedUpdate();
-        this.getWorld().getEntitiesWithinAABB(EntityXPOrb.class, getWorkingArea().expand(2, 2, 2)).forEach(Entity::setDead);
+        for(EntityXPOrb entity : this.getWorld().getEntitiesWithinAABB(EntityXPOrb.class, getWorkingArea().expand(2, 2, 2)))
+        {
+        	entity.setDead();
+        } //TODO from java 8
     }
 
     @Override
@@ -73,10 +76,10 @@ public class MobRelocatorTile extends WorkingAreaElectricMachine {
         if (mobs.size() == 0) return 0;
         EntityLiving mob = mobs.get(this.getWorld().rand.nextInt(mobs.size()));
         this.outExp.fill(new FluidStack(FluidsRegistry.ESSENCE, (int) (mob.getHealth() * ((MobRelocatorBlock) this.getBlockType()).getEssenceMultiplier())), true);
-        mob.attackEntityFrom(DamageSource.causePlayerDamage(IndustrialForegoing.getFakePlayer(world)), mob.getMaxHealth());
+        mob.attackEntityFrom(DamageSource.causePlayerDamage(IndustrialForegoing.getFakePlayer(worldObj)), mob.getMaxHealth());
         List<EntityItem> items = this.getWorld().getEntitiesWithinAABB(EntityItem.class, area);
         for (EntityItem item : items) {
-            if (!item.getEntityItem().isEmpty()) {
+            if (item.getEntityItem() != null) {  //TODO !item.getEntityItem().isEmpty()
                 ItemHandlerHelper.insertItem(outItems, item.getEntityItem(), false);
                 item.setDead();
             }
@@ -91,6 +94,4 @@ public class MobRelocatorTile extends WorkingAreaElectricMachine {
         BlockPos corner1 = new BlockPos(0, 0, 0).offset(f, getRadius() + 1).offset(EnumFacing.UP, getHeight());
         return new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(), this.pos.getX() + 1, this.pos.getY() + 1, this.pos.getZ() + 1).expand(getRadius(), getHeight(), getRadius()).offset(corner1);
     }
-
-
 }

@@ -63,8 +63,9 @@ public class SliderBlock extends Block {
         return new AxisAlignedBB(0, 0, 0, 1, (1F / 16F), 1);
     }
 
+    //TODO getCollisionBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState state, World world, BlockPos pos) {
         return new AxisAlignedBB(0, 0, 0, 1, (0.25F / 16F), 1);
     }
 

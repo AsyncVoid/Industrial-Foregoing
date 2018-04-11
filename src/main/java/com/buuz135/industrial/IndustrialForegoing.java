@@ -5,6 +5,7 @@ import com.buuz135.industrial.proxy.CommonProxy;
 import com.buuz135.industrial.utils.IFFakePlayer;
 import com.buuz135.industrial.utils.Reference;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -17,18 +18,18 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.util.HashMap;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_ID, version = Reference.VERSION, dependencies = "required-after:teslacorelib@[0.7.0,)", guiFactory = Reference.GUI_FACTORY)
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_ID, version = Reference.VERSION, dependencies = "required-after:teslacorelib@[0.7.0,)", guiFactory = Reference.GUI_FACTORY, acceptedMinecraftVersions="[1.10.2]")
 public class IndustrialForegoing {
 
     public static CreativeTabs creativeTab = new CreativeTabs(Reference.MOD_ID) {
         @Override
-        public ItemStack getTabIconItem() {
-            return new ItemStack(BlockRegistry.blackHoleUnitBlock);
+        public Item getTabIconItem() {
+            return new ItemStack(BlockRegistry.blackHoleUnitBlock).getItem();
         }
     };
     @SidedProxy(clientSide = Reference.PROXY_CLIENT, serverSide = Reference.PROXY_COMMON)
     private static CommonProxy proxy;
-    private static HashMap<Integer, IFFakePlayer> worldFakePlayer = new HashMap<>();
+    private static HashMap<Integer, IFFakePlayer> worldFakePlayer = new HashMap<Integer, IFFakePlayer>();
 
     static {
         if (!FluidRegistry.isUniversalBucketEnabled()) FluidRegistry.enableUniversalBucket();

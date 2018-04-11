@@ -9,7 +9,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.fixes.PotionItems;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
@@ -22,6 +21,7 @@ import net.ndrei.teslacorelib.gui.BasicTeslaGuiContainer;
 import net.ndrei.teslacorelib.gui.IGuiContainerPiece;
 import net.ndrei.teslacorelib.inventory.BoundingRectangle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -152,23 +152,24 @@ public class PotionEnervatorTile extends CustomElectricMachine {
             @Override
             public void drawMiddleLayer(BasicTeslaGuiContainer container, int guiX, int guiY, float partialTicks, int mouseX, int mouseY) {
                 super.drawMiddleLayer(container, guiX, guiY, partialTicks, mouseX, mouseY);
-                if (inputGlassBottles.getStackInSlot(0).isEmpty())
+                //TODO .isEmpty() .isEmpty() .isEmpty() .isEmpty() .isEmpty()
+                if (inputGlassBottles.getStackInSlot(0) == null)
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.GLASS_BOTTLE), container.getGuiLeft() + 18 * 4 + 11, container.getGuiTop() + 26 + 18 * 2, 8);
-                if (inputIngredients.getStackInSlot(0).isEmpty())
+                if (inputIngredients.getStackInSlot(0) == null)
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.NETHER_WART), container.getGuiLeft() + 18 * 4 + 11, container.getGuiTop() + 26, 8);
-                if (inputIngredients.getStackInSlot(1).isEmpty()) {
+                if (inputIngredients.getStackInSlot(1) == null) {
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.REDSTONE), container.getGuiLeft() + 18 * 5 + 11, container.getGuiTop() + 26, 9);
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.GUNPOWDER), container.getGuiLeft() + 18 * 5 + 11, container.getGuiTop() + 26, 8);
                 }
-                if (inputIngredients.getStackInSlot(2).isEmpty()) {
+                if (inputIngredients.getStackInSlot(2) == null) {
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.SUGAR), container.getGuiLeft() + 18 * 6 + 11, container.getGuiTop() + 26, 9);
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.GLOWSTONE_DUST), container.getGuiLeft() + 18 * 6 + 11, container.getGuiTop() + 26, 8);
                 }
-                if (inputIngredients.getStackInSlot(3).isEmpty()) {
+                if (inputIngredients.getStackInSlot(3) == null) {
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.FERMENTED_SPIDER_EYE), container.getGuiLeft() + 18 * 7 + 11, container.getGuiTop() + 26, 9);
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.MAGMA_CREAM), container.getGuiLeft() + 18 * 7 + 11, container.getGuiTop() + 26, 8);
                 }
-                if (inputIngredients.getStackInSlot(4).isEmpty()) {
+                if (inputIngredients.getStackInSlot(4) == null) {
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.GHAST_TEAR), container.getGuiLeft() + 18 * 8 + 11, container.getGuiTop() + 26, 9);
                     ItemStackUtils.renderItemIntoGUI(new ItemStack(Items.DRAGON_BREATH), container.getGuiLeft() + 18 * 8 + 11, container.getGuiTop() + 26, 8);
                 }
@@ -181,32 +182,49 @@ public class PotionEnervatorTile extends CustomElectricMachine {
     @Override
     public float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        if (action > 5) action = 0;
-        if (action != 0 && outputPotions.getStackInSlot(0).isEmpty() && outputPotions.getStackInSlot(1).isEmpty() && outputPotions.getStackInSlot(2).isEmpty()) {
+        if (action > 5) action = 0; //TODO .isEmpty().isEmpty().isEmpty().isEmpty()
+        if (action != 0 && outputPotions.getStackInSlot(0) == null && outputPotions.getStackInSlot(1) == null && outputPotions.getStackInSlot(2) == null) {
             action = 0;
             return 1;
-        }
-        if (action == 0 && inputGlassBottles.getStackInSlot(0).getCount() >= 3 && ItemHandlerHelper.insertItem(outputPotions, new ItemStack(Items.POTIONITEM, 3), true).isEmpty() && fluidTank.getFluidAmount() >= 3000) { //DUMMY STACK
+        }														//TODO .getCount()																					//TODO .isEmpty
+        if (action == 0 && inputGlassBottles.getStackInSlot(0) != null 
+        		&& inputGlassBottles.getStackInSlot(0).stackSize >= 3 
+        		&& ItemHandlerHelper.insertItem(outputPotions, new ItemStack(Items.POTIONITEM, 3), true) == null 
+        		&& fluidTank.getFluidAmount() >= 3000) { //DUMMY STACK
             ItemStack bottles = new ItemStack(Items.POTIONITEM, 3);
             bottles.setTagCompound(new PotionItems().fixTagCompound(bottles.getTagCompound() == null ? new NBTTagCompound() : bottles.getTagCompound()));
             ItemHandlerHelper.insertItem(outputPotions, bottles, false);
             fluidTank.drain(3000, true);
-            inputGlassBottles.getStackInSlot(0).setCount(inputGlassBottles.getStackInSlot(0).getCount() - 3);
+            inputGlassBottles.getStackInSlot(0).stackSize -= 3;
+            //inputGlassBottles.getStackInSlot(0).setCount(inputGlassBottles.getStackInSlot(0).getCount() - 3);
             action = 1;
             return 1;
         } else if (action > 0) {
             ItemStack ingredient = inputIngredients.getStackInSlot(action - 1);
-            if (!ingredient.isEmpty()) {
-                NonNullList<ItemStack> potions = NonNullList.create();
+            if (ingredient != null) { //TODO !.isEmpty()
+                //TODO 
+            	/*List<ItemStack> potions = new ArrayList<ItemStack>(); //NonNullList
                 potions.add(outputPotions.getStackInSlot(0));
                 potions.add(outputPotions.getStackInSlot(1));
-                potions.add(outputPotions.getStackInSlot(2));
-                if (BrewingRecipeRegistry.hasOutput(potions.get(0), ingredient)) {
+                potions.add(outputPotions.getStackInSlot(2));*/
+                ItemStack[] potions = new ItemStack[] 
+                		{
+                			outputPotions.getStackInSlot(0),
+                			outputPotions.getStackInSlot(1),
+                			outputPotions.getStackInSlot(2)
+                		};
+                
+                if (BrewingRecipeRegistry.hasOutput(potions[0], ingredient)) {
                     BrewingRecipeRegistry.brewPotions(potions, ingredient, new int[]{0, 1, 2});
-                    for (int i = 0; i < 3; ++i) outputPotions.setStackInSlot(i, potions.get(i));
+                    for (int i = 0; i < 3; ++i) 
+                    	outputPotions.setStackInSlot(i, potions[i]);
                     ++action;
-                    ingredient.setCount(ingredient.getCount() - 1);
-                    if (action > 5) action = 0;
+                    //TODO ingredient.setCount(ingredient.getCount() - 1);
+                    ingredient.stackSize -= 1;
+                    if(ingredient.stackSize < 1)
+                    	inputIngredients.setStackInSlot(action - 2, null);
+                    if (action > 5) 
+                    	action = 0;
                     return 1;
                 }
             }

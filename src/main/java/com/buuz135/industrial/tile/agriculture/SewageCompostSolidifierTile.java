@@ -49,8 +49,8 @@ public class SewageCompostSolidifierTile extends CustomElectricMachine {
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
 
-        ItemStack stack = new ItemStack(ItemRegistry.fertilizer, 1);
-        if (sewage.getFluid() != null && sewage.drain(2000, false).amount == 2000 && ItemHandlerHelper.insertItem(outFertilizer, stack, true).isEmpty()) {
+        ItemStack stack = new ItemStack(ItemRegistry.fertilizer, 1); //TODO isEmpty()
+        if (sewage.getFluid() != null && sewage.drain(2000, false).amount == 2000 && ItemHandlerHelper.insertItem(outFertilizer, stack, true) == null) {
             sewage.drain(2000, true);
             ItemHandlerHelper.insertItem(outFertilizer, stack, false);
             return 1;

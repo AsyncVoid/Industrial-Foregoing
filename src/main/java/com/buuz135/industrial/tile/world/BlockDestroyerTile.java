@@ -57,12 +57,12 @@ public class BlockDestroyerTile extends WorkingAreaElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
         List<BlockPos> blockPosList = BlockUtils.getBlockPosInAABB(getWorkingArea());
         for (BlockPos pos : blockPosList) {
-            if (!this.world.isAirBlock(pos)) {
-                Block block = this.world.getBlockState(pos).getBlock();
-                List<ItemStack> drops = block.getDrops(this.world, pos, this.world.getBlockState(pos), 0);
+            if (!this.worldObj.isAirBlock(pos)) {
+                Block block = this.worldObj.getBlockState(pos).getBlock();
+                List<ItemStack> drops = block.getDrops(this.worldObj, pos, this.worldObj.getBlockState(pos), 0);
                 boolean canInsert = true;
                 for (ItemStack stack : drops) {
-                    if (!ItemHandlerHelper.insertItem(outItems, stack, true).isEmpty()) {
+                    if (ItemHandlerHelper.insertItem(outItems, stack, true) != null) {    //TODO ! .isEmpty()
                         canInsert = false;
                         break;
                     }
@@ -71,7 +71,7 @@ public class BlockDestroyerTile extends WorkingAreaElectricMachine {
                     for (ItemStack stack : drops) {
                         ItemHandlerHelper.insertItem(outItems, stack, false);
                     }
-                    this.world.setBlockToAir(pos);
+                    this.worldObj.setBlockToAir(pos);
                     return 1;
                 }
             }

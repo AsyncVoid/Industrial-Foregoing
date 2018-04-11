@@ -37,7 +37,7 @@ public class OreProcessorTile extends CustomElectricMachine {
                 if (ItemStackUtils.isOre(stack)) {
                     if (Block.getBlockFromItem(stack.getItem()) != Blocks.AIR) {
                         Block block = Block.getBlockFromItem(stack.getItem());
-                        List<ItemStack> drops = block.getDrops(OreProcessorTile.this.world, null, block.getDefaultState(), 0);
+                        List<ItemStack> drops = block.getDrops(OreProcessorTile.this.worldObj, null, block.getDefaultState(), 0);
                         if (drops.size() > 0 && !drops.get(0).getItem().equals(stack.getItem())) {
                             return true;
                         }
@@ -72,24 +72,33 @@ public class OreProcessorTile extends CustomElectricMachine {
         this.addInventoryToStorage(output, "outout");
     }
 
-    private ItemStack getFirstStack() {
-        for (int i = 0; i < input.getSlots(); ++i) {
-            if (!input.getStackInSlot(i).isEmpty()) return input.getStackInSlot(i);
+    /*private ItemStack getFirstStack() {
+        for (int i = 0; i < input.getSlots(); ++i) { //TODO !input.getStackInSlot(i).isEmpty()
+            if (input.getStackInSlot(i) != null) 
+            	return input.getStackInSlot(i);
         }
-        return ItemStack.EMPTY;
+        return null;  //TODO ItemStack.EMPTY
+    }*/
+    private int getFirstStackSlot() {
+        for (int i = 0; i < input.getSlots(); ++i) {
+            if (input.getStackInSlot(i) != null) 
+            	return i;
+        }
+        return -1;
     }
 
     @Override
     protected float performWork() {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-
-        ItemStack stack = getFirstStack();
-        if (stack.isEmpty()) return 0;
+        int slot = getFirstStackSlot();
+        if(slot < 0) return 0;
+        ItemStack stack = input.getStackInSlot(slot);
+        //if (stack == null) return 0;  //TODO stack.isEmpty()
         Block block = Block.getBlockFromItem(stack.getItem());
-        List<ItemStack> drops = block.getDrops(OreProcessorTile.this.world, null, block.getDefaultState(), 0);
+        List<ItemStack> drops = block.getDrops(OreProcessorTile.this.worldObj, null, block.getDefaultState(), 0);
         boolean canInsert = true;
-        for (ItemStack temp : drops) {
-            if (!ItemHandlerHelper.insertItem(output, temp, true).isEmpty()) {
+        for (ItemStack temp : drops) {		//TODO !ItemHandlerHelper.insertItem(output, temp, true).isEmpty()
+            if (ItemHandlerHelper.insertItem(output, temp, true) == null) {
                 canInsert = false;
                 break;
             }
@@ -98,7 +107,9 @@ public class OreProcessorTile extends CustomElectricMachine {
             for (ItemStack temp : drops) {
                 ItemHandlerHelper.insertItem(output, temp, false);
             }
-            stack.setCount(stack.getCount() - 1);
+            stack.stackSize -= 1; //TODO stack.setCount(stack.getCount() - 1);
+            if(stack.stackSize < 1)
+            	input.setStackInSlot(slot, null);
             return 1;
         }
         return 0;

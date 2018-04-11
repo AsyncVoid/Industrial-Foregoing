@@ -34,7 +34,7 @@ public class BlockUtils {
     public static boolean isBlockOreDict(World world, BlockPos pos, String ore) {
         IBlockState state = world.getBlockState(pos);
         Item item = Item.getItemFromBlock(state.getBlock());
-        if (!item.equals(Items.AIR)) {
+        if (item != null) {          //TODO: Items.AIR
             ItemStack stack = new ItemStack(item);
             int id = OreDictionary.getOreID(ore);
             for (int i : OreDictionary.getOreIDs(stack)) {

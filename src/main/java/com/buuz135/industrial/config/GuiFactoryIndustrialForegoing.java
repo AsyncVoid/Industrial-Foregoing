@@ -12,7 +12,7 @@ public class GuiFactoryIndustrialForegoing implements IModGuiFactory {
     public void initialize(Minecraft minecraftInstance) {
 
     }
-
+/*
     @Override
     public boolean hasConfigGui() {
         return true;
@@ -22,7 +22,7 @@ public class GuiFactoryIndustrialForegoing implements IModGuiFactory {
     public GuiScreen createConfigGui(GuiScreen parentScreen) {
         return new GuiConfigIndustrialForegoing(parentScreen);
     }
-
+*/
     @Override
     public Class<? extends GuiScreen> mainConfigGuiClass() {
         return GuiConfigIndustrialForegoing.class;

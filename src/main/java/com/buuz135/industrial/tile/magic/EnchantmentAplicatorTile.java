@@ -108,14 +108,15 @@ public class EnchantmentAplicatorTile extends CustomElectricMachine {
         double amount = 0;
         for (int i = 0; i < list.tagCount(); ++i) {
             NBTTagCompound compound = ((NBTTagCompound) list.get(i));
-            amount += EnchantmentHelper.calcItemStackEnchantability(this.world.rand, compound.getInteger("id"), compound.getShort("lvl"), inItem.getStackInSlot(0));
+            amount += EnchantmentHelper.calcItemStackEnchantability(this.worldObj.rand, compound.getInteger("id"), compound.getShort("lvl"), inItem.getStackInSlot(0));
 
         }
         return amount;
     }
 
-    public boolean canWork() {
-        return !inItem.getStackInSlot(0).isEmpty() && !inEnchantedBook.getStackInSlot(0).isEmpty();
+    public boolean canWork() { 
+    	//TODO  return !inItem.getStackInSlot(0).isEmpty() && !inEnchantedBook.getStackInSlot(0).isEmpty();
+        return inItem.getStackInSlot(0) != null && inEnchantedBook.getStackInSlot(0) != null;
     }
 
     @Override
@@ -123,8 +124,8 @@ public class EnchantmentAplicatorTile extends CustomElectricMachine {
         if (WorkUtils.isDisabled(this.getBlockType())) return 0;
         //EnchantmentHelper.buildEnchantmentList(this.world.rand,ItemStack.EMPTY,30, true); //TODO the auto enchanting
         if (!canWork()) return 0;
-        int xp = (int) (getLevels() * 100);
-        if (experienceTank.getFluidAmount() >= xp && ItemHandlerHelper.insertItem(outEnchantedItem, inItem.getStackInSlot(0), true).isEmpty()) {
+        int xp = (int) (getLevels() * 100);																					//TODO .isEmpty()
+        if (experienceTank.getFluidAmount() >= xp && ItemHandlerHelper.insertItem(outEnchantedItem, inItem.getStackInSlot(0), true) == null) {
             NBTTagList list = ((ItemEnchantedBook) inEnchantedBook.getStackInSlot(0).getItem()).getEnchantments(inEnchantedBook.getStackInSlot(0));
             ItemStack stack = inItem.getStackInSlot(0).copy();
             for (int i = 0; i < list.tagCount(); ++i) {
@@ -133,8 +134,10 @@ public class EnchantmentAplicatorTile extends CustomElectricMachine {
                 stack.addEnchantment(enchantment, compound.getShort("lvl"));
             }
             ItemHandlerHelper.insertItem(outEnchantedItem, stack, false);
-            inItem.getStackInSlot(0).setCount(0);
-            inEnchantedBook.getStackInSlot(0).setCount(0);
+            inItem.setStackInSlot(0, null);
+            inEnchantedBook.setStackInSlot(0, null);
+            //inItem.getStackInSlot(0).stackSize = 0; //TODO .setCount(0)
+            //inEnchantedBook.getStackInSlot(0).stackSize = 0; //TODO .setCount(0)
             experienceTank.drain(xp, true);
             return 500;
         }
