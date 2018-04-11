@@ -37,7 +37,7 @@ public class SporesRecreatorTile extends CustomElectricMachine {
             @Override
             public boolean canInsertItem(int slot, ItemStack stack) {
                 Block block = Block.getBlockFromItem(stack.getItem());
-                return block.equals(Blocks.BROWN_MUSHROOM) || block.equals(Blocks.RED_MUSHROOM);
+                return block == Blocks.BROWN_MUSHROOM || block == Blocks.RED_MUSHROOM;
             }
 
             @Override
