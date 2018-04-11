@@ -82,7 +82,7 @@ public class BlockPlacerTile extends WorkingAreaElectricMachine {
     }*/
     private int getFirstSlotHasBlock() {
         for (int i = 0; i < inItems.getSlots(); ++i) {
-            if (inItems.getStackInSlot(i) != null && !Block.getBlockFromItem(inItems.getStackInSlot(i).getItem()).equals(Blocks.AIR))
+            if (inItems.getStackInSlot(i) != null && Block.getBlockFromItem(inItems.getStackInSlot(i).getItem()) != null)
                 return i;
         }
         return -1;
